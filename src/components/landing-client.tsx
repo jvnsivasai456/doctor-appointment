@@ -32,6 +32,8 @@ import {
   Flame,
   MapPin,
   Building2,
+  Search,
+  Quote,
 } from "lucide-react";
 
 interface SpecialtyItem {
@@ -128,6 +130,70 @@ export function LandingClient({
   const { lang, t } = useApp();
   const [symptomInput, setSymptomInput] = useState("");
   const [openFaq, setOpenFaq] = useState<number | null>(null);
+  const [activeDoctorTab, setActiveDoctorTab] = useState<"all" | "omr" | "alwarpet" | "vadapalani">("all");
+  const [heroSpecialty, setHeroSpecialty] = useState("all");
+  const [heroLocation, setHeroLocation] = useState("all");
+
+  const omrKeywords = [
+    "omr",
+    "sholinganallur",
+    "perungudi",
+    "karapakkam",
+    "kelambakkam",
+    "kottivakkam",
+    "navalur",
+    "padur",
+    "pallikaranai",
+    "gleneagles",
+    "chettinad",
+    "valarcare",
+    "iswarya",
+    "gem hospital",
+    "apollo cradle",
+  ];
+
+  const omrCount = initialDoctors.filter((doc) => {
+    const loc = (doc.cityLocation || "").toLowerCase();
+    const hosp = (doc.hospital || "").toLowerCase();
+    return omrKeywords.some((k) => loc.includes(k) || hosp.includes(k));
+  }).length;
+
+  const alwarpetCount = initialDoctors.filter((doc) => {
+    const loc = (doc.cityLocation || "").toLowerCase();
+    const hosp = (doc.hospital || "").toLowerCase();
+    return loc.includes("alwarpet") || hosp.includes("alwarpet");
+  }).length;
+
+  const vadapalaniCount = initialDoctors.filter((doc) => {
+    const loc = (doc.cityLocation || "").toLowerCase();
+    const hosp = (doc.hospital || "").toLowerCase();
+    return loc.includes("vadapalani") || hosp.includes("vadapalani");
+  }).length;
+
+  const displayedDoctors = initialDoctors.filter((doc) => {
+    if (activeDoctorTab === "all") return true;
+    const loc = (doc.cityLocation || "").toLowerCase();
+    const hosp = (doc.hospital || "").toLowerCase();
+    if (activeDoctorTab === "omr") {
+      return omrKeywords.some((k) => loc.includes(k) || hosp.includes(k));
+    }
+    if (activeDoctorTab === "alwarpet") {
+      return loc.includes("alwarpet") || hosp.includes("alwarpet");
+    }
+    if (activeDoctorTab === "vadapalani") {
+      return loc.includes("vadapalani") || hosp.includes("vadapalani");
+    }
+    return true;
+  });
+
+  const handleHeroSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    const params = new URLSearchParams();
+    if (heroSpecialty !== "all") params.set("specialty", heroSpecialty);
+    if (heroLocation !== "all") params.set("location", heroLocation);
+    if (symptomInput.trim()) params.set("query", symptomInput.trim());
+    router.push(`/doctors?${params.toString()}`);
+  };
 
   const handleSymptomSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -291,29 +357,76 @@ export function LandingClient({
             {t("heroSubtitle")}
           </p>
 
-          {/* Interactive AI Symptom Input Box */}
-          <form
-            onSubmit={handleSymptomSubmit}
-            className="mt-8 sm:mt-10 max-w-3xl mx-auto bg-white/95 dark:bg-slate-900/95 backdrop-blur-md p-2.5 sm:p-3 rounded-2xl sm:rounded-3xl shadow-xl shadow-teal-900/5 dark:shadow-none border border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row gap-2 transition focus-within:ring-2 focus-within:ring-brand-500 focus-within:border-transparent"
-          >
-            <div className="flex-1 flex items-center px-4 py-2">
-              <Activity className="w-5 h-5 text-brand-600 dark:text-brand-400 shrink-0 mr-3 animate-pulse" />
-              <input
-                type="text"
-                value={symptomInput}
-                onChange={(e) => setSymptomInput(e.target.value)}
-                placeholder={t("heroPlaceholder")}
-                className="w-full bg-transparent text-sm sm:text-base outline-none text-slate-900 dark:text-slate-100 placeholder:text-slate-400 font-normal"
-              />
-            </div>
-            <button
-              type="submit"
-              className="px-6 py-3.5 rounded-xl sm:rounded-2xl bg-brand-600 hover:bg-brand-700 active:scale-[0.98] text-white font-semibold text-sm sm:text-base shadow-lg shadow-brand-500/30 transition flex items-center justify-center gap-2 shrink-0"
-            >
-              <span>{t("heroCta")}</span>
-              <ArrowRight className="w-4 h-4" />
-            </button>
-          </form>
+          {/* Multi-Filter Clinical Quick Finder Bar */}
+          <div className="mt-8 sm:mt-10 max-w-4xl mx-auto bg-white/95 dark:bg-slate-900/95 backdrop-blur-md p-3 rounded-2xl sm:rounded-3xl shadow-xl shadow-teal-900/5 dark:shadow-none border border-slate-200 dark:border-slate-800 transition">
+            <form onSubmit={handleHeroSearch} className="flex flex-col md:flex-row items-center gap-2">
+              {/* Location Selector */}
+              <div className="w-full md:w-52 flex items-center px-3 py-2 bg-slate-50 dark:bg-slate-800/60 rounded-xl border border-slate-200/80 dark:border-slate-700/80">
+                <MapPin className="w-4 h-4 text-rose-500 shrink-0 mr-2" />
+                <select
+                  value={heroLocation}
+                  onChange={(e) => setHeroLocation(e.target.value)}
+                  className="w-full bg-transparent text-xs font-semibold text-slate-800 dark:text-slate-200 outline-none cursor-pointer"
+                >
+                  <option value="all">📍 All Chennai</option>
+                  <option value="OMR">OMR Corridor (10 Doctors)</option>
+                  <option value="Sholinganallur">Sholinganallur</option>
+                  <option value="Perungudi">Perungudi (GEM Hospital)</option>
+                  <option value="Karapakkam">Karapakkam (Apollo)</option>
+                  <option value="Kelambakkam">Kelambakkam (Chettinad)</option>
+                  <option value="Pallikaranai">Pallikaranai (KMH)</option>
+                  <option value="Alwarpet">Alwarpet (Kauvery)</option>
+                  <option value="Vadapalani">Vadapalani (Kauvery)</option>
+                </select>
+              </div>
+
+              {/* Specialty Selector */}
+              <div className="w-full md:w-56 flex items-center px-3 py-2 bg-slate-50 dark:bg-slate-800/60 rounded-xl border border-slate-200/80 dark:border-slate-700/80">
+                <Stethoscope className="w-4 h-4 text-brand-600 shrink-0 mr-2" />
+                <select
+                  value={heroSpecialty}
+                  onChange={(e) => setHeroSpecialty(e.target.value)}
+                  className="w-full bg-transparent text-xs font-semibold text-slate-800 dark:text-slate-200 outline-none cursor-pointer"
+                >
+                  <option value="all">🩺 All Specialties</option>
+                  <option value="General Medicine">General Medicine</option>
+                  <option value="Cardiology">Cardiology (Heart)</option>
+                  <option value="Neurology">Neurology (Brain/Spine)</option>
+                  <option value="Orthopedics">Orthopedics (Joints)</option>
+                  <option value="Pediatrics">Pediatrics (Child Care)</option>
+                  <option value="Dermatology">Dermatology (Skin/Hair)</option>
+                  <option value="Gynecology">Gynecology (Women/PCOS)</option>
+                </select>
+              </div>
+
+              {/* Symptom / Doctor search input */}
+              <div className="w-full flex-1 flex items-center px-3 py-2 bg-slate-50 dark:bg-slate-800/60 rounded-xl border border-slate-200/80 dark:border-slate-700/80">
+                <Search className="w-4 h-4 text-slate-400 shrink-0 mr-2" />
+                <input
+                  type="text"
+                  value={symptomInput}
+                  onChange={(e) => setSymptomInput(e.target.value)}
+                  placeholder={
+                    lang === "te"
+                      ? "లక్షణాలు, డాక్టర్ పేరు లేదా ఆసుపత్రి..."
+                      : lang === "ta"
+                      ? "அறிகுறிகள், மருத்துவர் பெயர் அல்லது மருத்துவமனை..."
+                      : "Search symptoms, doctor, hospital..."
+                  }
+                  className="w-full bg-transparent text-xs sm:text-sm outline-none text-slate-900 dark:text-slate-100 placeholder:text-slate-400 font-normal"
+                />
+              </div>
+
+              {/* Search button */}
+              <button
+                type="submit"
+                className="w-full md:w-auto px-5 py-2.5 rounded-xl bg-brand-600 hover:bg-brand-700 active:scale-[0.98] text-white font-semibold text-xs sm:text-sm shadow-md shadow-brand-500/20 transition flex items-center justify-center gap-1.5 shrink-0"
+              >
+                <span>{lang === "te" ? "వెతకండి" : lang === "ta" ? "தேடுங்கள்" : "Search"}</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </button>
+            </form>
+          </div>
 
           {/* Quick Symptom Suggestion Chips */}
           <div className="mt-4 flex flex-wrap items-center justify-center gap-1.5 text-xs text-slate-500">
@@ -345,26 +458,26 @@ export function LandingClient({
           {/* Real Clinical Capacity Trust Cards */}
           <div className="mt-12 grid grid-cols-2 sm:grid-cols-4 gap-3 max-w-4xl mx-auto pt-6 border-t border-slate-200/60 dark:border-slate-800/60">
             <div className="p-4 rounded-2xl bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border border-slate-200 dark:border-slate-800 shadow-sm text-left hover:border-brand-500/40 transition">
-              <span className="text-2xl sm:text-3xl font-black text-brand-600 block">12</span>
+              <span className="text-2xl sm:text-3xl font-black text-brand-600 block">22+</span>
               <span className="text-xs font-bold text-slate-800 dark:text-slate-200">Verified Doctors</span>
-              <span className="text-[11px] text-slate-400 block mt-0.5">MBBS / MD / DM / MS Specialists</span>
+              <span className="text-[11px] text-slate-400 block mt-0.5">Gleneagles, Apollo, Kauvery, Chettinad</span>
             </div>
 
             <div className="p-4 rounded-2xl bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border border-slate-200 dark:border-slate-800 shadow-sm text-left hover:border-sky-500/40 transition">
-              <span className="text-2xl sm:text-3xl font-black text-sky-600 block">6</span>
+              <span className="text-2xl sm:text-3xl font-black text-sky-600 block">7</span>
               <span className="text-xs font-bold text-slate-800 dark:text-slate-200">Clinical Specialties</span>
-              <span className="text-[11px] text-slate-400 block mt-0.5">Cardio, Derma, Ortho, Neuro</span>
+              <span className="text-[11px] text-slate-400 block mt-0.5">Cardio, Neuro, Ortho, Gynae</span>
             </div>
 
             <div className="p-4 rounded-2xl bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border border-slate-200 dark:border-slate-800 shadow-sm text-left hover:border-teal-500/40 transition">
-              <span className="text-2xl sm:text-3xl font-black text-teal-600 block">1,848</span>
-              <span className="text-xs font-bold text-slate-800 dark:text-slate-200">Open Slots / 14 Days</span>
-              <span className="text-[11px] text-slate-400 block mt-0.5">Morning, Afternoon & Evening</span>
+              <span className="text-2xl sm:text-3xl font-black text-teal-600 block">10</span>
+              <span className="text-xs font-bold text-slate-800 dark:text-slate-200">OMR Highway Doctors</span>
+              <span className="text-[11px] text-slate-400 block mt-0.5">Perungudi to Kelambakkam</span>
             </div>
 
             <div className="p-4 rounded-2xl bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border border-slate-200 dark:border-slate-800 shadow-sm text-left hover:border-emerald-500/40 transition">
-              <span className="text-2xl sm:text-3xl font-black text-emerald-600 block">0</span>
-              <span className="text-xs font-bold text-slate-800 dark:text-slate-200">Double Bookings</span>
+              <span className="text-2xl sm:text-3xl font-black text-emerald-600 block">3,500+</span>
+              <span className="text-xs font-bold text-slate-800 dark:text-slate-200">Open Slots / 14 Days</span>
               <span className="text-[11px] text-slate-400 block mt-0.5">180s Mutex Lock Guaranteed</span>
             </div>
           </div>
@@ -502,10 +615,340 @@ export function LandingClient({
         </div>
       </section>
 
+      {/* Premier Chennai Hospital Networks Showcase */}
+      <section className="py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full border-t border-slate-200/80 dark:border-slate-800/80">
+        <div className="flex flex-col sm:flex-row items-start sm:items-end justify-between mb-12">
+          <div>
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-teal-50 dark:bg-teal-950/80 border border-teal-200 dark:border-teal-800 text-xs font-semibold text-teal-700 dark:text-teal-300 mb-2">
+              <Building2 className="w-3.5 h-3.5 text-teal-600" />
+              <span>Accredited Clinical Networks</span>
+            </div>
+            <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900 dark:text-white">
+              {lang === "ta"
+                ? "சென்னையின் முன்னணி மருத்துவமனை கூட்டமைப்பு"
+                : lang === "te"
+                ? "చెన్నైలోని అగ్రగామి ఆసుపత్రి నెట్‌వర్క్‌లు"
+                : "Premier Hospital Networks in Chennai"}
+            </h2>
+            <p className="text-sm sm:text-base text-slate-500 dark:text-slate-400 mt-1">
+              NABH & JCI accredited multi-speciality medical centres with dedicated OPD chambers & emergency protocols.
+            </p>
+          </div>
+          <Link
+            href="/doctors"
+            className="mt-4 sm:mt-0 text-sm font-semibold text-brand-600 dark:text-brand-400 hover:text-brand-700 flex items-center gap-1 group"
+          >
+            <span>Browse All Network Doctors</span>
+            <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+          </Link>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {/* Hospital 1: Gleneagles Health City */}
+          <div className="group p-6 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-brand-500/50 hover:shadow-lg transition flex flex-col justify-between">
+            <div>
+              <div className="flex items-center justify-between mb-4">
+                <span className="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-rose-50 text-rose-700 dark:bg-rose-950/80 dark:text-rose-300 border border-rose-200/60">
+                  JCI & NABH Accredited
+                </span>
+                <span className="text-[11px] font-semibold text-emerald-600 flex items-center gap-1">
+                  <CheckCircle2 className="w-3.5 h-3.5" /> 2 Specialists Open
+                </span>
+              </div>
+              <h3 className="text-lg font-bold text-slate-900 dark:text-white group-hover:text-brand-600 transition">
+                Gleneagles Health City
+              </h3>
+              <p className="text-xs text-rose-600 dark:text-rose-400 font-semibold mt-0.5 flex items-center gap-1">
+                <MapPin className="w-3.5 h-3.5" /> Cheran Nagar, Sholinganallur, OMR
+              </p>
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-2.5 line-clamp-2 leading-relaxed">
+                45-acre multi-organ transplant & neuro-cardiac hospital. Featuring Dr. Dinesh Nayak (Neurology) and Dr. Arvind Menon (General Medicine).
+              </p>
+              <div className="mt-3 flex flex-wrap gap-1.5 text-[10px] font-medium text-slate-600 dark:text-slate-300">
+                <span className="px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800">Neurology</span>
+                <span className="px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800">General Medicine</span>
+                <span className="px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800">24x7 Stroke Unit</span>
+              </div>
+            </div>
+            <div className="mt-5 pt-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between">
+              <Link
+                href="/doctors?location=Sholinganallur"
+                className="text-xs font-bold text-brand-600 dark:text-brand-400 hover:underline flex items-center gap-1"
+              >
+                <span>View Gleneagles Doctors</span>
+                <ArrowRight className="w-3 h-3" />
+              </Link>
+              <a
+                href="https://www.google.com/maps/search/?api=1&query=Gleneagles+Health+City+Sholinganallur+Chennai"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-[11px] text-slate-400 hover:text-slate-600"
+              >
+                Directions ↗
+              </a>
+            </div>
+          </div>
+
+          {/* Hospital 2: Apollo Cradle & Children's Hospital */}
+          <div className="group p-6 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-brand-500/50 hover:shadow-lg transition flex flex-col justify-between">
+            <div>
+              <div className="flex items-center justify-between mb-4">
+                <span className="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-purple-50 text-purple-700 dark:bg-purple-950/80 dark:text-purple-300 border border-purple-200/60">
+                  Apollo Network
+                </span>
+                <span className="text-[11px] font-semibold text-emerald-600 flex items-center gap-1">
+                  <CheckCircle2 className="w-3.5 h-3.5" /> 2 Specialists Open
+                </span>
+              </div>
+              <h3 className="text-lg font-bold text-slate-900 dark:text-white group-hover:text-brand-600 transition">
+                Apollo Cradle & Children&apos;s
+              </h3>
+              <p className="text-xs text-purple-600 dark:text-purple-400 font-semibold mt-0.5 flex items-center gap-1">
+                <MapPin className="w-3.5 h-3.5" /> Rajiv Gandhi Salai, Karapakkam, OMR
+              </p>
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-2.5 line-clamp-2 leading-relaxed">
+                Dedicated women and child super-speciality centre. Featuring Dr. Shruti K. (Pediatrics) and Dr. Dhivyambigai Rajendran (Obstetrics & Gynaecology).
+              </p>
+              <div className="mt-3 flex flex-wrap gap-1.5 text-[10px] font-medium text-slate-600 dark:text-slate-300">
+                <span className="px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800">Pediatrics</span>
+                <span className="px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800">Gynecology</span>
+                <span className="px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800">Level-III NICU</span>
+              </div>
+            </div>
+            <div className="mt-5 pt-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between">
+              <Link
+                href="/doctors?location=Karapakkam"
+                className="text-xs font-bold text-brand-600 dark:text-brand-400 hover:underline flex items-center gap-1"
+              >
+                <span>View Apollo OMR Doctors</span>
+                <ArrowRight className="w-3 h-3" />
+              </Link>
+              <a
+                href="https://www.google.com/maps/search/?api=1&query=Apollo+Cradle+Karapakkam+OMR+Chennai"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-[11px] text-slate-400 hover:text-slate-600"
+              >
+                Directions ↗
+              </a>
+            </div>
+          </div>
+
+          {/* Hospital 3: Kauvery Hospital Alwarpet */}
+          <div className="group p-6 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-brand-500/50 hover:shadow-lg transition flex flex-col justify-between">
+            <div>
+              <div className="flex items-center justify-between mb-4">
+                <span className="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-teal-50 text-teal-700 dark:bg-teal-950/80 dark:text-teal-300 border border-teal-200/60">
+                  Centre of Excellence
+                </span>
+                <span className="text-[11px] font-semibold text-emerald-600 flex items-center gap-1">
+                  <CheckCircle2 className="w-3.5 h-3.5" /> 6 Specialists Open
+                </span>
+              </div>
+              <h3 className="text-lg font-bold text-slate-900 dark:text-white group-hover:text-brand-600 transition">
+                Kauvery Hospital (Alwarpet)
+              </h3>
+              <p className="text-xs text-teal-600 dark:text-teal-400 font-semibold mt-0.5 flex items-center gap-1">
+                <MapPin className="w-3.5 h-3.5" /> No. 199, Luz Church Road, Alwarpet
+              </p>
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-2.5 line-clamp-2 leading-relaxed">
+                Flagship tertiary hospital with advanced Heart & Brain Institute. Senior consultants including Dr. Suresh Rao, Dr. Ananya Swaminathan, and Dr. Vikram Raghavan.
+              </p>
+              <div className="mt-3 flex flex-wrap gap-1.5 text-[10px] font-medium text-slate-600 dark:text-slate-300">
+                <span className="px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800">Cardiology</span>
+                <span className="px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800">Neurology</span>
+                <span className="px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800">Orthopedics</span>
+              </div>
+            </div>
+            <div className="mt-5 pt-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between">
+              <Link
+                href="/doctors?location=Alwarpet"
+                className="text-xs font-bold text-brand-600 dark:text-brand-400 hover:underline flex items-center gap-1"
+              >
+                <span>View Alwarpet Specialists</span>
+                <ArrowRight className="w-3 h-3" />
+              </Link>
+              <a
+                href="https://www.google.com/maps/search/?api=1&query=Kauvery+Hospital+Alwarpet+Chennai"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-[11px] text-slate-400 hover:text-slate-600"
+              >
+                Directions ↗
+              </a>
+            </div>
+          </div>
+
+          {/* Hospital 4: Kauvery Hospital Vadapalani */}
+          <div className="group p-6 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-brand-500/50 hover:shadow-lg transition flex flex-col justify-between">
+            <div>
+              <div className="flex items-center justify-between mb-4">
+                <span className="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-sky-50 text-sky-700 dark:bg-sky-950/80 dark:text-sky-300 border border-sky-200/60">
+                  Metro Adjacent Hub
+                </span>
+                <span className="text-[11px] font-semibold text-emerald-600 flex items-center gap-1">
+                  <CheckCircle2 className="w-3.5 h-3.5" /> 6 Specialists Open
+                </span>
+              </div>
+              <h3 className="text-lg font-bold text-slate-900 dark:text-white group-hover:text-brand-600 transition">
+                Kauvery Hospital (Vadapalani)
+              </h3>
+              <p className="text-xs text-sky-600 dark:text-sky-400 font-semibold mt-0.5 flex items-center gap-1">
+                <MapPin className="w-3.5 h-3.5" /> Jawaharlal Nehru Road, Vadapalani
+              </p>
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-2.5 line-clamp-2 leading-relaxed">
+                250-bed multi-speciality hospital adjacent to Vadapalani Metro station. Senior faculty including Dr. Rajesh Kumar, Dr. Anand Srinivasan, and Dr. Pavithra Sundar.
+              </p>
+              <div className="mt-3 flex flex-wrap gap-1.5 text-[10px] font-medium text-slate-600 dark:text-slate-300">
+                <span className="px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800">Cardiology</span>
+                <span className="px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800">Orthopedics</span>
+                <span className="px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800">Pediatrics</span>
+              </div>
+            </div>
+            <div className="mt-5 pt-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between">
+              <Link
+                href="/doctors?location=Vadapalani"
+                className="text-xs font-bold text-brand-600 dark:text-brand-400 hover:underline flex items-center gap-1"
+              >
+                <span>View Vadapalani Specialists</span>
+                <ArrowRight className="w-3 h-3" />
+              </Link>
+              <a
+                href="https://www.google.com/maps/search/?api=1&query=Kauvery+Hospital+Vadapalani+Chennai"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-[11px] text-slate-400 hover:text-slate-600"
+              >
+                Directions ↗
+              </a>
+            </div>
+          </div>
+
+          {/* Hospital 5: GEM Hospital Perungudi */}
+          <div className="group p-6 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-brand-500/50 hover:shadow-lg transition flex flex-col justify-between">
+            <div>
+              <div className="flex items-center justify-between mb-4">
+                <span className="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-amber-50 text-amber-700 dark:bg-amber-950/80 dark:text-amber-300 border border-amber-200/60">
+                  Gastro Centre of Excellence
+                </span>
+                <span className="text-[11px] font-semibold text-emerald-600 flex items-center gap-1">
+                  <CheckCircle2 className="w-3.5 h-3.5" /> 1 Specialist Open
+                </span>
+              </div>
+              <h3 className="text-lg font-bold text-slate-900 dark:text-white group-hover:text-brand-600 transition">
+                GEM Hospital & Research Centre
+              </h3>
+              <p className="text-xs text-amber-600 dark:text-amber-400 font-semibold mt-0.5 flex items-center gap-1">
+                <MapPin className="w-3.5 h-3.5" /> MGR Main Road, Perungudi, OMR
+              </p>
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-2.5 line-clamp-2 leading-relaxed">
+                Asia&apos;s premier gastroenterology, liver, and advanced laparoscopic surgery facility. Featuring Dr. R. Vinoth Kumar (Gastroenterologist & Hepatologist).
+              </p>
+              <div className="mt-3 flex flex-wrap gap-1.5 text-[10px] font-medium text-slate-600 dark:text-slate-300">
+                <span className="px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800">Gastroenterology</span>
+                <span className="px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800">Endoscopy Suite</span>
+                <span className="px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800">Liver ICU</span>
+              </div>
+            </div>
+            <div className="mt-5 pt-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between">
+              <Link
+                href="/doctors?location=Perungudi"
+                className="text-xs font-bold text-brand-600 dark:text-brand-400 hover:underline flex items-center gap-1"
+              >
+                <span>View GEM Perungudi Doctors</span>
+                <ArrowRight className="w-3 h-3" />
+              </Link>
+              <a
+                href="https://www.google.com/maps/search/?api=1&query=GEM+Hospital+Perungudi+OMR+Chennai"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-[11px] text-slate-400 hover:text-slate-600"
+              >
+                Directions ↗
+              </a>
+            </div>
+          </div>
+
+          {/* Hospital 6: Chettinad Super Speciality Hospital */}
+          <div className="group p-6 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-brand-500/50 hover:shadow-lg transition flex flex-col justify-between">
+            <div>
+              <div className="flex items-center justify-between mb-4">
+                <span className="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-emerald-50 text-emerald-700 dark:bg-emerald-950/80 dark:text-emerald-300 border border-emerald-200/60">
+                  Multi-Speciality Campus
+                </span>
+                <span className="text-[11px] font-semibold text-emerald-600 flex items-center gap-1">
+                  <CheckCircle2 className="w-3.5 h-3.5" /> 1 Specialist Open
+                </span>
+              </div>
+              <h3 className="text-lg font-bold text-slate-900 dark:text-white group-hover:text-brand-600 transition">
+                Chettinad Super Speciality Hospital
+              </h3>
+              <p className="text-xs text-emerald-600 dark:text-emerald-400 font-semibold mt-0.5 flex items-center gap-1">
+                <MapPin className="w-3.5 h-3.5" /> Chettinad Health City, Kelambakkam, OMR
+              </p>
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-2.5 line-clamp-2 leading-relaxed">
+                Expansive tertiary healthcare centre serving South OMR. Featuring Dr. G. Ashok (Cardiologist) and complete 24/7 cardiac catheterization laboratory.
+              </p>
+              <div className="mt-3 flex flex-wrap gap-1.5 text-[10px] font-medium text-slate-600 dark:text-slate-300">
+                <span className="px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800">Cardiology</span>
+                <span className="px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800">Interventional ICU</span>
+                <span className="px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800">Emergency Cath Lab</span>
+              </div>
+            </div>
+            <div className="mt-5 pt-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between">
+              <Link
+                href="/doctors?location=Kelambakkam"
+                className="text-xs font-bold text-brand-600 dark:text-brand-400 hover:underline flex items-center gap-1"
+              >
+                <span>View Chettinad Doctors</span>
+                <ArrowRight className="w-3 h-3" />
+              </Link>
+              <a
+                href="https://www.google.com/maps/search/?api=1&query=Chettinad+Health+City+Kelambakkam+OMR+Chennai"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-[11px] text-slate-400 hover:text-slate-600"
+              >
+                Directions ↗
+              </a>
+            </div>
+          </div>
+        </div>
+
+        {/* Chennai Locality Quick Pills */}
+        <div className="mt-10 p-5 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200/80 dark:border-slate-800 flex flex-wrap items-center justify-between gap-3">
+          <div className="flex items-center gap-2 text-xs font-bold text-slate-700 dark:text-slate-300">
+            <MapPin className="w-4 h-4 text-rose-500" />
+            <span>Direct Browse by Chennai Hub:</span>
+          </div>
+          <div className="flex flex-wrap items-center gap-1.5 text-xs">
+            {[
+              { name: "OMR IT Corridor", query: "OMR" },
+              { name: "Sholinganallur", query: "Sholinganallur" },
+              { name: "Karapakkam", query: "Karapakkam" },
+              { name: "Perungudi", query: "Perungudi" },
+              { name: "Kelambakkam", query: "Kelambakkam" },
+              { name: "Pallikaranai", query: "Pallikaranai" },
+              { name: "Alwarpet", query: "Alwarpet" },
+              { name: "Vadapalani", query: "Vadapalani" },
+              { name: "Anna Nagar", query: "Anna Nagar" },
+            ].map((hub) => (
+              <Link
+                key={hub.name}
+                href={`/doctors?location=${encodeURIComponent(hub.query)}`}
+                className="px-3 py-1 rounded-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 font-semibold text-slate-700 dark:text-slate-300 hover:border-brand-500 hover:text-brand-600 transition shadow-2xs text-[11px]"
+              >
+                📍 {hub.name}
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* Featured Chennai Doctors Section */}
       <section className="py-20 bg-slate-100/60 dark:bg-slate-900/40 border-y border-slate-200/80 dark:border-slate-800/80">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-14">
+          <div className="text-center mb-10">
             <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-brand-50 dark:bg-brand-950/80 border border-brand-200 dark:border-brand-800 text-xs font-semibold text-brand-700 dark:text-brand-300 mb-3">
               <MapPin className="w-3.5 h-3.5 text-brand-600" />
               <span>Chennai Medical Specialists</span>
@@ -513,15 +956,87 @@ export function LandingClient({
             <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900 dark:text-white">
               {lang === "ta" ? "சென்னையின் முன்னணி சிறப்பு மருத்துவர்கள்" : lang === "te" ? "చెన్నైలోని ప్రముఖ వైద్య నిపుణులు" : "Top Verified Specialists in Chennai"}
             </h2>
-            <p className="text-sm sm:text-base text-slate-500 dark:text-slate-400 mt-1">
+            <p className="text-sm sm:text-base text-slate-500 dark:text-slate-400 mt-1 max-w-2xl mx-auto">
               {lang === "ta"
-                ? "அப்போலோ, காவேரி, சிம்ஸ், மியாட் போன்ற சென்னையின் முன்னணி மருத்துவமனைகளின் மருத்துவர்கள்"
-                : "Consult accredited doctors from Apollo Greams Road, SIMS Vadapalani, Kauvery Alwarpet, MIOT, and MGM Healthcare"}
+                ? "OMR தகவல் தொழில்நுட்ப சாலை, ஆழ்வார்பேட்டை, வடபழனி உள்ளிட்ட முன்னணி மருத்துவமனைகளின் மருத்துவர்கள்"
+                : "Consult accredited doctors across OMR Corridor, Kauvery Alwarpet, and Kauvery Vadapalani with zero double-booking guarantee."}
             </p>
           </div>
 
+          {/* Interactive Locality Hub Filter Tabs */}
+          <div className="flex flex-wrap items-center justify-center gap-2 mb-10">
+            <button
+              type="button"
+              onClick={() => setActiveDoctorTab("all")}
+              className={`px-4 py-2 rounded-full text-xs sm:text-sm font-bold transition flex items-center gap-1.5 ${
+                activeDoctorTab === "all"
+                  ? "bg-brand-600 text-white shadow-md shadow-brand-500/20"
+                  : "bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-50"
+              }`}
+            >
+              <span>📍 All Chennai Specialists</span>
+              <span className={`px-2 py-0.5 rounded-full text-[11px] font-bold ${
+                activeDoctorTab === "all" ? "bg-white/20 text-white" : "bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300"
+              }`}>
+                {initialDoctors.length}
+              </span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setActiveDoctorTab("omr")}
+              className={`px-4 py-2 rounded-full text-xs sm:text-sm font-bold transition flex items-center gap-1.5 ${
+                activeDoctorTab === "omr"
+                  ? "bg-brand-600 text-white shadow-md shadow-brand-500/20"
+                  : "bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-50"
+              }`}
+            >
+              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+              <span>OMR IT Corridor Hubs</span>
+              <span className={`px-2 py-0.5 rounded-full text-[11px] font-bold ${
+                activeDoctorTab === "omr" ? "bg-white/20 text-white" : "bg-emerald-100 text-emerald-800 dark:bg-emerald-950/80 dark:text-emerald-300"
+              }`}>
+                {omrCount} Doctors
+              </span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setActiveDoctorTab("alwarpet")}
+              className={`px-4 py-2 rounded-full text-xs sm:text-sm font-bold transition flex items-center gap-1.5 ${
+                activeDoctorTab === "alwarpet"
+                  ? "bg-brand-600 text-white shadow-md shadow-brand-500/20"
+                  : "bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-50"
+              }`}
+            >
+              <span>Kauvery Alwarpet</span>
+              <span className={`px-2 py-0.5 rounded-full text-[11px] font-bold ${
+                activeDoctorTab === "alwarpet" ? "bg-white/20 text-white" : "bg-sky-100 text-sky-800 dark:bg-sky-950/80 dark:text-sky-300"
+              }`}>
+                {alwarpetCount} Doctors
+              </span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setActiveDoctorTab("vadapalani")}
+              className={`px-4 py-2 rounded-full text-xs sm:text-sm font-bold transition flex items-center gap-1.5 ${
+                activeDoctorTab === "vadapalani"
+                  ? "bg-brand-600 text-white shadow-md shadow-brand-500/20"
+                  : "bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-50"
+              }`}
+            >
+              <span>Kauvery Vadapalani</span>
+              <span className={`px-2 py-0.5 rounded-full text-[11px] font-bold ${
+                activeDoctorTab === "vadapalani" ? "bg-white/20 text-white" : "bg-teal-100 text-teal-800 dark:bg-teal-950/80 dark:text-teal-300"
+              }`}>
+                {vadapalaniCount} Doctors
+              </span>
+            </button>
+          </div>
+
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {initialDoctors.map((doc) => {
+            {displayedDoctors.map((doc) => {
               const nextSlot = doc.slots[0];
               const slotFormatted = nextSlot
                 ? new Date(nextSlot.startTime).toLocaleTimeString([], {
@@ -727,10 +1242,10 @@ export function LandingClient({
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-14">
             <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900 dark:text-white">
-              Patient Stories & Verified Experiences
+              {lang === "ta" ? "சென்னையின் நோயாளிகள் பகிர்ந்த உண்மை அனுபவங்கள்" : lang === "te" ? "చెన్నై రోగుల నిజమైన అనుభవాలు" : "Patient Stories & Verified Chennai Experiences"}
             </h2>
             <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
-              Real patients treated by accredited doctors across India
+              Real patients treated by verified specialists across OMR, Alwarpet, and Vadapalani
             </p>
           </div>
 
@@ -743,16 +1258,16 @@ export function LandingClient({
                   ))}
                 </div>
                 <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed italic">
-                  &ldquo;When my father experienced sudden chest heaviness, MediBook AI triaged the symptoms instantly. The 180s slot lock reserved Dr. Priya Sharma immediately with zero confusion.&rdquo;
+                  &ldquo;I needed an urgent neurology opinion for severe migraine and numbness while working in ELCOT SEZ Sholinganallur. Booked Dr. Dinesh Nayak at Gleneagles in 40 seconds. The 180s mutex hold ensured no one took my 6:30 PM slot!&rdquo;
                 </p>
               </div>
               <div className="mt-5 pt-4 border-t border-slate-100 dark:border-slate-800 flex items-center gap-3">
                 <div className="w-9 h-9 rounded-full bg-brand-100 text-brand-700 font-bold flex items-center justify-center text-xs">
-                  RK
+                  RS
                 </div>
                 <div>
-                  <h4 className="text-xs font-bold text-slate-900 dark:text-white">Rajesh Krishnan</h4>
-                  <p className="text-[11px] text-slate-400">Cardiology Patient • Chennai</p>
+                  <h4 className="text-xs font-bold text-slate-900 dark:text-white">Ramesh Sundar</h4>
+                  <p className="text-[11px] text-slate-400">Neurology Patient • Sholinganallur, OMR</p>
                 </div>
               </div>
             </div>
@@ -765,16 +1280,16 @@ export function LandingClient({
                   ))}
                 </div>
                 <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed italic">
-                  &ldquo;தோல் அரிப்பு மற்றும் தடிப்புக்காக எளிய தமிழில் அறிகுறிகளை டைப் செய்தேன். Dr. கவிதாவிடம் 40 வினாடிகளில் முன்பதிவு முடிந்து காலெண்டரில் பதிவானது!&rdquo;
+                  &ldquo;காரப்பாக்கம் அப்போலோ கிரேடில் மருத்துவமனையில் டாக்டர் ஸ்ருதியிடம் என் மகளுக்கு முன்பதிவு செய்தேன். தமிழ் மொழியில் அறிகுறிகளை கூறியதும் தகுந்த பிரிவை உடனே காட்டியது. மிகவும் பயனுள்ள இணையதளம்!&rdquo;
                 </p>
               </div>
               <div className="mt-5 pt-4 border-t border-slate-100 dark:border-slate-800 flex items-center gap-3">
                 <div className="w-9 h-9 rounded-full bg-teal-100 text-teal-700 font-bold flex items-center justify-center text-xs">
-                  MS
+                  MN
                 </div>
                 <div>
-                  <h4 className="text-xs font-bold text-slate-900 dark:text-white">Meenakshi Sundaram</h4>
-                  <p className="text-[11px] text-slate-400">Dermatology Patient • Coimbatore</p>
+                  <h4 className="text-xs font-bold text-slate-900 dark:text-white">Meena Natarajan</h4>
+                  <p className="text-[11px] text-slate-400">Pediatrics Patient • Karapakkam, OMR</p>
                 </div>
               </div>
             </div>
@@ -787,16 +1302,16 @@ export function LandingClient({
                   ))}
                 </div>
                 <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed italic">
-                  &ldquo;తీవ్రమైన మైగ్రేన్ తలనొప్పికి తెలుగులో టైప్ చేయగానే న్యూరాలజిస్ట్ డాక్టర్ వద్దకు రూట్ చేసింది. 180 సెకన్ల లాక్ సమయం చాలా ఉపశమనం కలిగించింది.&rdquo;
+                  &ldquo;మా నాన్నగారి గుండె పరీక్ష కోసం కావేరి ఆసుపత్రి ఆళ్వార్‌పేటలో డాక్టర్ సురేష్ రావు గారిని సంప్రదించాము. డబుల్ బుకింగ్ లేకపోవడం మరియు డిజిటల్ రిసెప్షన్ అనుభవం అద్భుతం.&rdquo;
                 </p>
               </div>
               <div className="mt-5 pt-4 border-t border-slate-100 dark:border-slate-800 flex items-center gap-3">
                 <div className="w-9 h-9 rounded-full bg-sky-100 text-sky-700 font-bold flex items-center justify-center text-xs">
-                  VR
+                  KV
                 </div>
                 <div>
-                  <h4 className="text-xs font-bold text-slate-900 dark:text-white">Venkat Rao</h4>
-                  <p className="text-[11px] text-slate-400">Neurology Patient • Hyderabad</p>
+                  <h4 className="text-xs font-bold text-slate-900 dark:text-white">Kalyan Varma</h4>
+                  <p className="text-[11px] text-slate-400">Cardiology Patient • Alwarpet Hub</p>
                 </div>
               </div>
             </div>
