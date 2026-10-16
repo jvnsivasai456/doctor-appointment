@@ -75,13 +75,12 @@ const chennaiLocalities = [
   "Karapakkam",
   "Kelambakkam",
   "Pallikaranai",
-  "Perumbakkam",
-  "Kottivakkam",
   "Alwarpet",
   "Vadapalani",
   "Greams Road",
   "Adyar",
   "Anna Nagar",
+  "Velachery",
 ];
 
 function DoctorsDirectoryContent() {
