@@ -82,13 +82,13 @@ export function Navbar() {
             <Users className="w-4 h-4" />
             {t("navDoctors")}
           </Link>
-          <a
-            href="/#book-appointment"
+          <Link
+            href="/book-appointment"
             className="px-3 py-1.5 rounded-lg text-xs font-bold text-white bg-gradient-to-r from-brand-600 to-teal-600 hover:from-brand-700 hover:to-teal-700 shadow-sm transition flex items-center gap-1.5"
           >
             <Calendar className="w-3.5 h-3.5" />
             <span>Book Appointment</span>
-          </a>
+          </Link>
 
           {session?.user && (
             <Link
@@ -123,14 +123,14 @@ export function Navbar() {
         {/* Right Controls */}
         <div className="flex items-center gap-2">
           {/* Mobile Quick Book Button */}
-          <a
-            href="/#book-appointment"
+          <Link
+            href="/book-appointment"
             className="md:hidden flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-bold text-white bg-gradient-to-r from-brand-600 to-teal-600 hover:from-brand-700 hover:to-teal-700 shadow-sm transition"
             title="Book Doctor Appointment"
           >
             <Calendar className="w-3.5 h-3.5" />
             <span>Book</span>
-          </a>
+          </Link>
           {/* Font Size Modifier */}
           <div className="flex items-center bg-slate-100 dark:bg-slate-800 rounded-lg p-0.5 border border-slate-200 dark:border-slate-700">
             <button

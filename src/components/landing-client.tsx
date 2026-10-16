@@ -5,7 +5,6 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useApp } from "./providers";
 import { DoctorAvatar } from "./doctor-avatar";
-import { QuickBookingSection } from "./quick-booking-section";
 import {
   Stethoscope,
   HeartPulse,
@@ -489,14 +488,14 @@ export function LandingClient({
 
           {/* Instant Hero Actions */}
           <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
-            <a
-              href="#book-appointment"
+            <Link
+              href="/book-appointment"
               className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl bg-gradient-to-r from-brand-600 to-teal-600 hover:from-brand-700 hover:to-teal-700 text-white font-bold text-sm sm:text-base shadow-lg shadow-teal-700/25 active:scale-[0.98] transition cursor-pointer"
             >
               <Calendar className="w-4 h-4 text-emerald-200" />
-              <span>{lang === "te" ? "తక్షణ అపాయింట్‌మెంట్ బుక్ చేయండి" : lang === "ta" ? "உடனடி மருத்துவ சந்திப்பு பதிவு செய்க" : "Book Doctor Appointment Now"}</span>
+              <span>{lang === "te" ? "తక్షణ అపాయింట్‌మెంట్ బుక్ చేయండి" : lang === "ta" ? "உடனடி மருத்துவ சந்திப்பு பதிவு செய்க" : "Book Doctor Appointment"}</span>
               <ArrowRight className="w-4 h-4" />
-            </a>
+            </Link>
             <Link
               href="/doctors"
               className="inline-flex items-center gap-2 px-5 py-3 rounded-2xl bg-white/90 dark:bg-slate-800/90 hover:bg-slate-50 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 font-semibold text-sm shadow-sm transition"
@@ -672,9 +671,6 @@ export function LandingClient({
           </div>
         </div>
       </section>
-
-      {/* Interactive Quick Doctor Appointment Booking Console (Embedded on Home Page) */}
-      <QuickBookingSection doctors={initialDoctors} />
 
       {/* 3-Step "How it works" */}
       <section className="py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
