@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MediBook Chennai - Doctor Appointment Portal</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- Top App Navigation Bar -->
+  <header class="app-header">
+    <div class="header-container">
+      <div class="logo-area">
+        <div class="logo-icon">🩺</div>
+        <div class="logo-title">MediBook <span>Chennai</span></div>
+      </div>
+      <div style="display: flex; align-items: center; gap: 0.75rem;">
+        <div class="header-badge">
+          <span>📍</span> 9 Chennai Localities
+        </div>
+        <button id="viewBookingsBtn" class="bookings-pill-btn">
+          <span>📅</span> My Bookings (<span id="bookingsBadge">0</span>)
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content Layout -->
+  <main class="main-content">
+    
+    <!-- Hero Banner -->
+    <section class="hero-banner">
+      <p class="hero-subtitle">Verified Specialist Directory</p>
+      <h1 class="hero-title">Find & Book Top Doctors in Chennai</h1>
+      <p class="hero-desc">
+        Browse verified medical specialists across all 9 premier Chennai zones and 7 clinical categories. Instant booking with zero double-booking lock.
+      </p>
+    </section>
+
+    <!-- Controls & Filter Toolbar -->
+    <section class="filter-card">
+      <div class="filter-row-top">
+        <!-- 1. Location Dropdown (9 Locations) -->
+        <div class="control-group">
+          <label for="locationSelect" class="control-label">Select Locality</label>
+          <select id="locationSelect" class="select-input">
+            <!-- Populated dynamically via JS -->
+          </select>
+        </div>
+
+        <!-- 2. Search Box for Doctor Name -->
+        <div class="control-group">
+          <label for="searchInput" class="control-label">Search by Doctor Name</label>
+          <input
+            type="text"
+            id="searchInput"
+            class="search-input"
+            placeholder="Type doctor's name (e.g. Radhika, Ashwin, Meera)..."
+          />
+        </div>
+
+        <!-- 3. Sort Dropdown -->
+        <div class="control-group">
+          <label for="sortSelect" class="control-label">Sort Results</label>
+          <select id="sortSelect" class="select-input">
+            <option value="rating">Top Rated (Highest First)</option>
+            <option value="experience">Most Experienced</option>
+            <option value="fee_asc">Consultation Fee: Low to High</option>
+            <option value="fee_desc">Consultation Fee: High to Low</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- 4. Category Chips (All + 7 Categories) -->
+      <div class="control-group">
+        <span class="control-label">Filter by Medical Category</span>
+        <div id="categoryChips" class="chips-container">
+          <!-- Populated dynamically via JS -->
+        </div>
+      </div>
+    </section>
+
+    <!-- Results Status Bar -->
+    <div class="results-summary">
+      <div>
+        Showing <span id="doctorCount" class="summary-count">0</span> doctors across <span id="locationName" class="summary-count">All Localities</span>
+      </div>
+      <div id="activeFilterBadge" style="font-weight: 600; color: var(--primary);">
+        All 7 Categories Active
+      </div>
+    </div>
+
+    <!-- Grouped Categories & Doctor Cards Container -->
+    <div id="categoriesContainer">
+      <!-- Injected dynamically by app.js -->
+    </div>
+
+    <!-- Empty State Container (shown when nothing matches) -->
+    <div id="emptyState" class="empty-state" style="display: none;">
+      <div class="empty-icon">🔍</div>
+      <h3 class="empty-title">No Doctors Found</h3>
+      <p class="empty-desc">
+        We couldn't find any doctor matching your current search or category filter in this location.
+      </p>
+      <button id="resetFiltersBtn" class="btn-reset">Reset Filters</button>
+    </div>
+
+  </main>
+
+  <!-- Appointment Booking Modal Dialog -->
+  <div id="bookingModal" class="modal-overlay">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 class="modal-title">Book Doctor Appointment</h3>
+        <button id="closeModalBtn" class="modal-close-btn">&times;</button>
+      </div>
+
+      <!-- Booking Form Step -->
+      <div id="bookingFormSection" class="modal-body">
+        <div class="modal-doc-summary">
+          <div id="modalDocName" class="modal-doc-name">Dr. Name</div>
+          <div id="modalDocMeta" class="modal-doc-meta">Category • Clinic</div>
+        </div>
+
+        <form id="appointmentForm">
+          <div class="form-group">
+            <label for="patientName" class="form-label">Patient Full Name</label>
+            <input type="text" id="patientName" class="form-input" placeholder="e.g. Ramesh Kumar" required />
+          </div>
+
+          <div class="form-group">
+            <label for="patientPhone" class="form-label">Phone Number (10 Digits)</label>
+            <input type="tel" id="patientPhone" class="form-input" placeholder="e.g. 9876543210" required />
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
+            <div class="form-group">
+              <label for="bookingDate" class="form-label">Consultation Date</label>
+              <input type="date" id="bookingDate" class="form-input" required />
+            </div>
+
+            <div class="form-group">
+              <label for="bookingSlot" class="form-label">Select Slot</label>
+              <select id="bookingSlot" class="form-select" required>
+                <option value="09:00 AM">09:00 AM</option>
+                <option value="10:30 AM">10:30 AM</option>
+                <option value="11:45 AM">11:45 AM</option>
+                <option value="02:30 PM">02:30 PM</option>
+                <option value="04:30 PM">04:30 PM</option>
+                <option value="06:00 PM">06:00 PM</option>
+                <option value="07:15 PM">07:15 PM</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="modal-footer" style="padding: 1rem 0 0; background: none; border: none;">
+            <button type="button" id="cancelBookingBtn" class="btn-cancel">Cancel</button>
+            <button type="submit" class="btn-confirm">Confirm Appointment</button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Booking Confirmation Receipt Screen -->
+      <div id="bookingSuccessSection" class="modal-body" style="display: none;">
+        <div class="booking-success-box">
+          <div class="success-check-icon">✓</div>
+          <h4 class="success-title">Appointment Confirmed!</h4>
+          <p class="success-text">Your appointment token has been reserved in system memory.</p>
+
+          <div class="success-receipt">
+            <div class="receipt-row">
+              <span class="receipt-label">Booking ID:</span>
+              <span id="confirmToken" class="receipt-val">#MB-8472</span>
+            </div>
+            <div class="receipt-row">
+              <span class="receipt-label">Patient:</span>
+              <span id="confirmPatient" class="receipt-val">Ramesh Kumar</span>
+            </div>
+            <div class="receipt-row">
+              <span class="receipt-label">Doctor:</span>
+              <span id="confirmDoctor" class="receipt-val">Dr. Ashwin Ramanathan</span>
+            </div>
+            <div class="receipt-row">
+              <span class="receipt-label">Clinic:</span>
+              <span id="confirmClinic" class="receipt-val">CareWell Clinic, Anna Nagar</span>
+            </div>
+            <div class="receipt-row">
+              <span class="receipt-label">Date & Time:</span>
+              <span id="confirmDateTime" class="receipt-val">Tomorrow at 10:30 AM</span>
+            </div>
+            <div class="receipt-row">
+              <span class="receipt-label">Consultation Fee:</span>
+              <span id="confirmFee" class="receipt-val" style="color: var(--secondary);">₹600</span>
+            </div>
+          </div>
+
+          <button id="successDoneBtn" class="btn-confirm" style="width: 100%;">Done</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- "My Bookings" Modal Dialog -->
+  <div id="myBookingsModal" class="modal-overlay">
+    <div class="modal-card" style="max-width: 540px;">
+      <div class="modal-header">
+        <h3 class="modal-title">My In-Memory Appointments</h3>
+        <button id="closeMyBookingsBtn" class="modal-close-btn">&times;</button>
+      </div>
+      <div class="modal-body" style="max-height: 60vh; overflow-y: auto;">
+        <div id="myBookingsList">
+          <!-- Injected dynamically -->
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button id="closeMyBookingsFooterBtn" class="btn-cancel">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="doctors.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

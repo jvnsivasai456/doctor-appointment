@@ -1,0 +1,136 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgGradFemale" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#4f46e5" />
+      <stop offset="50%" stop-color="#7c3aed" />
+      <stop offset="100%" stop-color="#0284c7" />
+    </linearGradient>
+    <linearGradient id="skinToneFemale" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#d49260" />
+      <stop offset="100%" stop-color="#b87441" />
+    </linearGradient>
+    <linearGradient id="coatGradF" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff" />
+      <stop offset="100%" stop-color="#e0e7ff" />
+    </linearGradient>
+    <style>
+      @keyframes floatHeadF {
+        0%, 100% { transform: translateY(0px); }
+        50% { transform: translateY(-3.5px); }
+      }
+      @keyframes pulseAuraF {
+        0%, 100% { opacity: 0.35; transform: scale(1); }
+        50% { opacity: 0.75; transform: scale(1.05); }
+      }
+      @keyframes heartbeatWaveF {
+        0%, 100% { stroke-dashoffset: 0; opacity: 0.6; }
+        50% { stroke-dashoffset: 30; opacity: 1; }
+      }
+      @keyframes blinkEyesF {
+        0%, 96%, 100% { transform: scaleY(1); }
+        98% { transform: scaleY(0.1); }
+      }
+      .auraF {
+        transform-origin: 100px 100px;
+        animation: pulseAuraF 3.2s ease-in-out infinite;
+      }
+      .doctor-body-f {
+        transform-origin: 100px 140px;
+        animation: floatHeadF 4.2s ease-in-out infinite;
+      }
+      .eyes-f {
+        transform-origin: 100px 86px;
+        animation: blinkEyesF 5s infinite;
+      }
+      .ekg-line-f {
+        stroke-dasharray: 60;
+        animation: heartbeatWaveF 2.6s linear infinite;
+      }
+    </style>
+  </defs>
+
+  <!-- Background Canvas -->
+  <rect width="200" height="200" rx="36" fill="url(#bgGradFemale)" />
+
+  <!-- Animated Ambient Aura Rings -->
+  <circle cx="100" cy="100" r="82" fill="none" stroke="#a78bfa" stroke-width="2" opacity="0.3" class="auraF" />
+  <circle cx="100" cy="100" r="70" fill="none" stroke="#38bdf8" stroke-width="1.5" opacity="0.4" class="auraF" style="animation-delay: -1.6s;" />
+
+  <!-- Background Clinic Grid / EKG Pulse -->
+  <path d="M 20 155 L 65 155 L 75 140 L 85 170 L 95 148 L 105 158 L 115 155 L 180 155"
+        fill="none" stroke="#ddd6fe" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+        class="ekg-line-f" opacity="0.5" />
+
+  <!-- Doctor Character Group -->
+  <g class="doctor-body-f">
+    <!-- White Lab Coat Shoulders -->
+    <path d="M 38 200 L 48 148 Q 68 130 100 130 Q 132 130 152 148 L 162 200 Z" fill="url(#coatGradF)" />
+
+    <!-- Formal Inner Kurti / Collar in Teal -->
+    <path d="M 85 130 L 100 162 L 115 130 Z" fill="#0d9488" />
+    <circle cx="100" cy="144" r="2" fill="#fef08a" />
+    <circle cx="100" cy="154" r="2" fill="#fef08a" />
+
+    <!-- Coat Lapels -->
+    <path d="M 70 132 L 88 178 L 100 178 L 84 130 Z" fill="#ffffff" />
+    <path d="M 130 132 L 112 178 L 100 178 L 116 130 Z" fill="#ffffff" />
+
+    <!-- Stethoscope around neck -->
+    <path d="M 74 134 Q 62 155 78 182 Q 88 195 96 195" fill="none" stroke="#475569" stroke-width="4.5" stroke-linecap="round" />
+    <path d="M 126 134 Q 138 155 122 182 Q 112 195 104 195" fill="none" stroke="#475569" stroke-width="4.5" stroke-linecap="round" />
+    <!-- Chest Piece Bell -->
+    <circle cx="96" cy="194" r="7" fill="#cbd5e1" stroke="#1e293b" stroke-width="2" />
+    <circle cx="96" cy="194" r="3" fill="#a855f7" />
+
+    <!-- Neck -->
+    <path d="M 88 112 L 88 134 Q 100 142 112 134 L 112 112 Z" fill="#bf7a47" />
+
+    <!-- Back Hair Bun / Long Hair Flow -->
+    <ellipse cx="100" cy="94" rx="40" ry="38" fill="#18181b" />
+
+    <!-- Head & Face -->
+    <ellipse cx="100" cy="88" rx="30" ry="35" fill="url(#skinToneFemale)" />
+
+    <!-- Ears & Studs -->
+    <ellipse cx="70" cy="88" rx="4.5" ry="8" fill="#b87441" />
+    <ellipse cx="130" cy="88" rx="4.5" ry="8" fill="#b87441" />
+    <circle cx="70" cy="92" r="2.5" fill="#fbbf24" stroke="#d97706" stroke-width="0.5" />
+    <circle cx="130" cy="92" r="2.5" fill="#fbbf24" stroke="#d97706" stroke-width="0.5" />
+
+    <!-- Front Hair Style -->
+    <path d="M 69 78 Q 72 50 100 48 Q 128 50 131 78 Q 115 62 100 64 Q 85 62 69 78 Z" fill="#27272a" />
+    <!-- Hair side partitions -->
+    <path d="M 70 78 Q 80 66 100 66 Q 120 66 130 78 Q 118 60 100 60 Q 82 60 70 78 Z" fill="#18181b" />
+
+    <!-- Small Bindi -->
+    <circle cx="100" cy="74" r="1.8" fill="#be123c" />
+
+    <!-- Warm Friendly Smile -->
+    <path d="M 90 104 Q 100 114 110 104" fill="none" stroke="#881337" stroke-width="2.5" stroke-linecap="round" />
+
+    <!-- Eyes & Brows with blink animation -->
+    <g class="eyes-f">
+      <!-- Gentle Eyebrows -->
+      <path d="M 82 74 Q 90 71 95 75" fill="none" stroke="#27272a" stroke-width="2.2" stroke-linecap="round" />
+      <path d="M 118 74 Q 110 71 105 75" fill="none" stroke="#27272a" stroke-width="2.2" stroke-linecap="round" />
+      <!-- Eyes with kajal -->
+      <ellipse cx="88" cy="82" rx="3.8" ry="4.2" fill="#18181b" />
+      <ellipse cx="112" cy="82" rx="3.8" ry="4.2" fill="#18181b" />
+      <!-- Eye Sparkles -->
+      <circle cx="89" cy="80.5" r="1.3" fill="#ffffff" />
+      <circle cx="113" cy="80.5" r="1.3" fill="#ffffff" />
+    </g>
+
+    <!-- Pocket Badge with Doctor Cross -->
+    <rect x="122" y="156" width="20" height="24" rx="3" fill="#ffffff" stroke="#cbd5e1" stroke-width="1" />
+    <rect x="126" y="160" width="12" height="4" rx="1" fill="#7c3aed" />
+    <path d="M 132 168 L 132 174 M 129 171 L 135 171" stroke="#e11d48" stroke-width="2" stroke-linecap="round" />
+  </g>
+
+  <!-- Live Pulse Badge (Top Right) -->
+  <g transform="translate(156, 16)">
+    <circle cx="12" cy="12" r="12" fill="#047857" opacity="0.3" class="auraF" />
+    <circle cx="12" cy="12" r="8" fill="#10b981" />
+    <path d="M 8 12 L 11 15 L 16 9" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+  </g>
+</svg>
