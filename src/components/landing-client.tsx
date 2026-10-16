@@ -215,6 +215,24 @@ export function LandingClient({
     return loc.includes("chetpet") || hosp.includes("mehta");
   }).length;
 
+  const porurCount = initialDoctors.filter((doc) => {
+    const loc = (doc.cityLocation || "").toLowerCase();
+    const hosp = (doc.hospital || "").toLowerCase();
+    return loc.includes("porur") || hosp.includes("srmc") || hosp.includes("ramachandra");
+  }).length;
+
+  const mogappairCount = initialDoctors.filter((doc) => {
+    const loc = (doc.cityLocation || "").toLowerCase();
+    const hosp = (doc.hospital || "").toLowerCase();
+    return loc.includes("mogappair") || hosp.includes("mmm") || hosp.includes("mission");
+  }).length;
+
+  const velacheryCount = initialDoctors.filter((doc) => {
+    const loc = (doc.cityLocation || "").toLowerCase();
+    const hosp = (doc.hospital || "").toLowerCase();
+    return loc.includes("velachery") || hosp.includes("prashanth");
+  }).length;
+
   const displayedDoctors = initialDoctors.filter((doc) => {
     if (activeDoctorTab === "all") return true;
     const loc = (doc.cityLocation || "").toLowerCase();
@@ -227,6 +245,15 @@ export function LandingClient({
     }
     if (activeDoctorTab === "alwarpet") {
       return loc.includes("alwarpet") || hosp.includes("alwarpet");
+    }
+    if (activeDoctorTab === "porur") {
+      return loc.includes("porur") || hosp.includes("srmc") || hosp.includes("ramachandra");
+    }
+    if (activeDoctorTab === "mogappair") {
+      return loc.includes("mogappair") || hosp.includes("mmm") || hosp.includes("mission");
+    }
+    if (activeDoctorTab === "velachery") {
+      return loc.includes("velachery") || hosp.includes("prashanth");
     }
     if (activeDoctorTab === "miot") {
       return loc.includes("manapakkam") || hosp.includes("miot");
@@ -434,18 +461,21 @@ export function LandingClient({
                   onChange={(e) => setHeroLocation(e.target.value)}
                   className="w-full bg-transparent text-xs font-semibold text-slate-800 dark:text-slate-200 outline-none cursor-pointer"
                 >
-                  <option value="all">📍 All Chennai (55 Doctors)</option>
-                  <option value="OMR">OMR Corridor (15 Doctors)</option>
-                  <option value="Vadapalani">Vadapalani (11 Doctors - Kauvery, SIMS, Vijaya)</option>
-                  <option value="Alwarpet">Alwarpet (6 Doctors - Kauvery)</option>
-                  <option value="Manapakkam">Manapakkam (3 Doctors - MIOT)</option>
-                  <option value="Chromepet">Chromepet (3 Doctors - Rela)</option>
+                  <option value="all">📍 All Chennai (95 Doctors)</option>
+                  <option value="OMR">OMR Corridor (19 Doctors)</option>
+                  <option value="Vadapalani">Vadapalani (15 Doctors - SIMS, Kauvery, Vijaya)</option>
+                  <option value="Alwarpet">Alwarpet (10 Doctors - Kauvery)</option>
+                  <option value="Manapakkam">Manapakkam (7 Doctors - MIOT)</option>
+                  <option value="Chromepet">Chromepet (7 Doctors - Rela)</option>
+                  <option value="Velachery">Velachery (7 Doctors - Prashanth)</option>
+                  <option value="Anna Nagar">Anna Nagar (6 Doctors - MGM, SMF)</option>
+                  <option value="Greams Road">Greams Road (5 Doctors - Apollo Main)</option>
+                  <option value="Porur">Porur (5 Doctors - SRMC)</option>
+                  <option value="Mogappair">Mogappair (4 Doctors - MMM)</option>
+                  <option value="Taramani">Taramani (4 Doctors - VHS)</option>
                   <option value="Shenoy Nagar">Shenoy Nagar (3 Doctors - Billroth)</option>
-                  <option value="Chetpet">Chetpet (3 Doctors - Dr. Mehta's)</option>
-                  <option value="Greams Road">Greams Road (2 Doctors - Apollo Main)</option>
+                  <option value="Chetpet">Chetpet (3 Doctors - Dr. Mehta&apos;s)</option>
                   <option value="Adyar">Adyar (2 Doctors - Fortis Malar)</option>
-                  <option value="Anna Nagar">Anna Nagar (2 Doctors - MGM, SMF)</option>
-                  <option value="Velachery">Velachery (3 Doctors - Prashanth)</option>
                 </select>
               </div>
 
@@ -527,9 +557,9 @@ export function LandingClient({
           {/* Real Clinical Capacity Trust Cards */}
           <div className="mt-12 grid grid-cols-2 sm:grid-cols-4 gap-3 max-w-4xl mx-auto pt-6 border-t border-slate-200/60 dark:border-slate-800/60">
             <div className="p-4 rounded-2xl bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border border-slate-200 dark:border-slate-800 shadow-sm text-left hover:border-brand-500/40 transition">
-              <span className="text-2xl sm:text-3xl font-black text-brand-600 block">55+</span>
+              <span className="text-2xl sm:text-3xl font-black text-brand-600 block">95+</span>
               <span className="text-xs font-bold text-slate-800 dark:text-slate-200">Verified Doctors</span>
-              <span className="text-[11px] text-slate-400 block mt-0.5">Apollo, Kauvery, MIOT, SIMS, Rela</span>
+              <span className="text-[11px] text-slate-400 block mt-0.5">Apollo, Kauvery, MIOT, SIMS, SRMC, MMM</span>
             </div>
 
             <div className="p-4 rounded-2xl bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border border-slate-200 dark:border-slate-800 shadow-sm text-left hover:border-sky-500/40 transition">
@@ -539,13 +569,13 @@ export function LandingClient({
             </div>
 
             <div className="p-4 rounded-2xl bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border border-slate-200 dark:border-slate-800 shadow-sm text-left hover:border-teal-500/40 transition">
-              <span className="text-2xl sm:text-3xl font-black text-teal-600 block">15</span>
+              <span className="text-2xl sm:text-3xl font-black text-teal-600 block">19</span>
               <span className="text-xs font-bold text-slate-800 dark:text-slate-200">OMR Highway Doctors</span>
-              <span className="text-[11px] text-slate-400 block mt-0.5">Perungudi to Kelambakkam</span>
+              <span className="text-[11px] text-slate-400 block mt-0.5">Taramani to Kelambakkam</span>
             </div>
 
             <div className="p-4 rounded-2xl bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border border-slate-200 dark:border-slate-800 shadow-sm text-left hover:border-emerald-500/40 transition">
-              <span className="text-2xl sm:text-3xl font-black text-emerald-600 block">8,400+</span>
+              <span className="text-2xl sm:text-3xl font-black text-emerald-600 block">14,500+</span>
               <span className="text-xs font-bold text-slate-800 dark:text-slate-200">Open Slots / 14 Days</span>
               <span className="text-[11px] text-slate-400 block mt-0.5">180s Mutex Lock Guaranteed</span>
             </div>
@@ -1252,6 +1282,96 @@ export function LandingClient({
               </a>
             </div>
           </div>
+
+          {/* Hospital 13: Sri Ramachandra Medical Centre (SRMC) */}
+          <div className="group p-6 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-brand-500/50 hover:shadow-lg transition flex flex-col justify-between">
+            <div>
+              <div className="flex items-center justify-between mb-4">
+                <span className="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-indigo-50 text-indigo-700 dark:bg-indigo-950/80 dark:text-indigo-300 border border-indigo-200/60">
+                  Deemed Medical University
+                </span>
+                <span className="text-[11px] font-semibold text-emerald-600 flex items-center gap-1">
+                  <CheckCircle2 className="w-3.5 h-3.5" /> 5 Specialists Open
+                </span>
+              </div>
+              <h3 className="text-lg font-bold text-slate-900 dark:text-white group-hover:text-brand-600 transition">
+                Sri Ramachandra Medical Centre (SRMC)
+              </h3>
+              <p className="text-xs text-indigo-600 dark:text-indigo-400 font-semibold mt-0.5 flex items-center gap-1">
+                <MapPin className="w-3.5 h-3.5" /> No. 1, Ramachandra Nagar, Porur
+              </p>
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-2.5 line-clamp-2 leading-relaxed">
+                South India&apos;s flagship 2,000-bed university healthcare destination. Leading specialists: Dr. T. R. Muralidharan (Cardio), Dr. P. V. Vijayaraghavan (Ortho), and Dr. Usha Vishwanath (Gynae).
+              </p>
+              <div className="mt-3 flex flex-wrap gap-1.5 text-[10px] font-medium text-slate-600 dark:text-slate-300">
+                <span className="px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800">Cardiology</span>
+                <span className="px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800">Orthopedics</span>
+                <span className="px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800">General Medicine</span>
+              </div>
+            </div>
+            <div className="mt-5 pt-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between">
+              <Link
+                href="/doctors?location=Porur"
+                className="text-xs font-bold text-brand-600 dark:text-brand-400 hover:underline flex items-center gap-1"
+              >
+                <span>View SRMC Specialists</span>
+                <ArrowRight className="w-3 h-3" />
+              </Link>
+              <a
+                href="https://www.google.com/maps/search/?api=1&query=Sri+Ramachandra+Medical+Centre+Porur+Chennai"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-[11px] text-slate-400 hover:text-slate-600"
+              >
+                Directions ↗
+              </a>
+            </div>
+          </div>
+
+          {/* Hospital 14: Madras Medical Mission (MMM) */}
+          <div className="group p-6 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-brand-500/50 hover:shadow-lg transition flex flex-col justify-between">
+            <div>
+              <div className="flex items-center justify-between mb-4">
+                <span className="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-rose-50 text-rose-700 dark:bg-rose-950/80 dark:text-rose-300 border border-rose-200/60">
+                  Cardiac & Neuro Pioneer
+                </span>
+                <span className="text-[11px] font-semibold text-emerald-600 flex items-center gap-1">
+                  <CheckCircle2 className="w-3.5 h-3.5" /> 4 Specialists Open
+                </span>
+              </div>
+              <h3 className="text-lg font-bold text-slate-900 dark:text-white group-hover:text-brand-600 transition">
+                Madras Medical Mission (MMM)
+              </h3>
+              <p className="text-xs text-rose-600 dark:text-rose-400 font-semibold mt-0.5 flex items-center gap-1">
+                <MapPin className="w-3.5 h-3.5" /> 4-A, Dr. J. Jayalalitha Nagar, Mogappair East
+              </p>
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-2.5 line-clamp-2 leading-relaxed">
+                Internationally renowned for pioneering cardiovascular surgeries and advanced neurology. Featuring Dr. Mullasari Ajit Sankardas, Dr. Benjamin Cherian, and Dr. Jacob George.
+              </p>
+              <div className="mt-3 flex flex-wrap gap-1.5 text-[10px] font-medium text-slate-600 dark:text-slate-300">
+                <span className="px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800">Cardiology</span>
+                <span className="px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800">Neurology</span>
+                <span className="px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800">Pediatrics</span>
+              </div>
+            </div>
+            <div className="mt-5 pt-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between">
+              <Link
+                href="/doctors?location=Mogappair"
+                className="text-xs font-bold text-brand-600 dark:text-brand-400 hover:underline flex items-center gap-1"
+              >
+                <span>View MMM Specialists</span>
+                <ArrowRight className="w-3 h-3" />
+              </Link>
+              <a
+                href="https://www.google.com/maps/search/?api=1&query=Madras+Medical+Mission+Mogappair+Chennai"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-[11px] text-slate-400 hover:text-slate-600"
+              >
+                Directions ↗
+              </a>
+            </div>
+          </div>
         </div>
 
         {/* Chennai Locality Quick Pills */}
@@ -1262,17 +1382,20 @@ export function LandingClient({
           </div>
           <div className="flex flex-wrap items-center gap-1.5 text-xs">
             {[
-              { name: "OMR IT Corridor (15)", query: "OMR" },
-              { name: "Vadapalani (11)", query: "Vadapalani" },
-              { name: "Alwarpet (6)", query: "Alwarpet" },
-              { name: "Manapakkam - MIOT (3)", query: "Manapakkam" },
-              { name: "Chromepet - Rela (3)", query: "Chromepet" },
+              { name: "OMR IT Corridor (19)", query: "OMR" },
+              { name: "Vadapalani (15)", query: "Vadapalani" },
+              { name: "Alwarpet (10)", query: "Alwarpet" },
+              { name: "Manapakkam - MIOT (7)", query: "Manapakkam" },
+              { name: "Chromepet - Rela (7)", query: "Chromepet" },
+              { name: "Velachery - Prashanth (7)", query: "Velachery" },
+              { name: "Anna Nagar - MGM (6)", query: "Anna Nagar" },
+              { name: "Greams Road - Apollo (5)", query: "Greams Road" },
+              { name: "Porur - SRMC (5)", query: "Porur" },
+              { name: "Mogappair - MMM (4)", query: "Mogappair" },
+              { name: "Taramani - VHS (4)", query: "Taramani" },
               { name: "Shenoy Nagar - Billroth (3)", query: "Shenoy Nagar" },
               { name: "Chetpet - Mehta's (3)", query: "Chetpet" },
-              { name: "Greams Road - Apollo (2)", query: "Greams Road" },
               { name: "Adyar - Fortis Malar (2)", query: "Adyar" },
-              { name: "Anna Nagar - MGM/SMF (2)", query: "Anna Nagar" },
-              { name: "Velachery - Prashanth (3)", query: "Velachery" },
             ].map((hub) => (
               <Link
                 key={hub.name}
@@ -1491,6 +1614,57 @@ export function LandingClient({
                 activeDoctorTab === "annanagar" ? "bg-white/20 text-white" : "bg-amber-100 text-amber-800 dark:bg-amber-950/80 dark:text-amber-300"
               }`}>
                 {annaNagarCount} Doctors
+              </span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setActiveDoctorTab("porur")}
+              className={`px-4 py-2 rounded-full text-xs sm:text-sm font-bold transition flex items-center gap-1.5 ${
+                activeDoctorTab === "porur"
+                  ? "bg-brand-600 text-white shadow-md shadow-brand-500/20"
+                  : "bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-50"
+              }`}
+            >
+              <span>SRMC Porur</span>
+              <span className={`px-2 py-0.5 rounded-full text-[11px] font-bold ${
+                activeDoctorTab === "porur" ? "bg-white/20 text-white" : "bg-indigo-100 text-indigo-800 dark:bg-indigo-950/80 dark:text-indigo-300"
+              }`}>
+                {porurCount} Doctors
+              </span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setActiveDoctorTab("mogappair")}
+              className={`px-4 py-2 rounded-full text-xs sm:text-sm font-bold transition flex items-center gap-1.5 ${
+                activeDoctorTab === "mogappair"
+                  ? "bg-brand-600 text-white shadow-md shadow-brand-500/20"
+                  : "bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-50"
+              }`}
+            >
+              <span>MMM Mogappair</span>
+              <span className={`px-2 py-0.5 rounded-full text-[11px] font-bold ${
+                activeDoctorTab === "mogappair" ? "bg-white/20 text-white" : "bg-rose-100 text-rose-800 dark:bg-rose-950/80 dark:text-rose-300"
+              }`}>
+                {mogappairCount} Doctors
+              </span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setActiveDoctorTab("velachery")}
+              className={`px-4 py-2 rounded-full text-xs sm:text-sm font-bold transition flex items-center gap-1.5 ${
+                activeDoctorTab === "velachery"
+                  ? "bg-brand-600 text-white shadow-md shadow-brand-500/20"
+                  : "bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-50"
+              }`}
+            >
+              <span>Prashanth Velachery</span>
+              <span className={`px-2 py-0.5 rounded-full text-[11px] font-bold ${
+                activeDoctorTab === "velachery" ? "bg-white/20 text-white" : "bg-teal-100 text-teal-800 dark:bg-teal-950/80 dark:text-teal-300"
+              }`}>
+                {velacheryCount} Doctors
               </span>
             </button>
           </div>
