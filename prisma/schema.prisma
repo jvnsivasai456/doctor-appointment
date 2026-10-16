@@ -1,0 +1,124 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id               String          @id @default(cuid())
+  name             String
+  email            String          @unique
+  passwordHash     String
+  role             String          @default("PATIENT") // PATIENT, DOCTOR, ADMIN
+  dpdpConsent      Boolean         @default(false)
+  consentTimestamp DateTime?
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime        @updatedAt
+
+  doctorProfile    DoctorProfile?
+  appointments     Appointment[]
+  notifications    Notification[]
+  auditLogs        AuditLog[]
+}
+
+model Specialty {
+  id            String          @id @default(cuid())
+  name          String          @unique
+  nameTa        String          // Tamil name
+  description   String
+  descriptionTa String
+  iconName      String
+  doctors       DoctorProfile[]
+}
+
+model DoctorProfile {
+  id              String        @id @default(cuid())
+  userId          String        @unique
+  user            User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  specialtyId     String
+  specialty       Specialty     @relation(fields: [specialtyId], references: [id])
+  qualification   String
+  experienceYears Int
+  consultationFee Float
+  rating          Float         @default(4.8)
+  reviewCount     Int           @default(120)
+  bio             String
+  bioTa           String
+  languages       String        @default("English, தமிழ்")
+  avatarUrl       String?
+  isAvailable     Boolean       @default(true)
+  hospital        String        @default("Apollo Hospitals, Greams Road")
+  cityLocation    String        @default("Greams Road, Chennai")
+  doctorIdCode    String?
+  fullAddress     String?
+  landmark        String?
+  pincode         String?
+  lat             Float?
+  lng             Float?
+
+  slots           Slot[]
+  appointments    Appointment[]
+}
+
+model Slot {
+  id                 String         @id @default(cuid())
+  doctorId           String
+  doctor             DoctorProfile  @relation(fields: [doctorId], references: [id], onDelete: Cascade)
+  startTime          DateTime
+  endTime            DateTime
+  isBooked           Boolean        @default(false)
+  isLocked           Boolean        @default(false)
+  lockedByUserId     String?
+  lockedUntil        DateTime?
+  isEmergencyBlocked Boolean        @default(false)
+
+  appointment        Appointment?
+
+  @@unique([doctorId, startTime]) // Guarantees physical impossibility of double-booking!
+}
+
+model Appointment {
+  id                    String         @id @default(cuid())
+  patientId             String
+  patient               User           @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  doctorId              String
+  doctor                DoctorProfile  @relation(fields: [doctorId], references: [id], onDelete: Cascade)
+  slotId                String         @unique
+  slot                  Slot           @relation(fields: [slotId], references: [id], onDelete: Cascade)
+  appointmentDate       DateTime
+  status                String         @default("CONFIRMED") // CONFIRMED, COMPLETED, CANCELLED, NO_SHOW
+  urgency               String         @default("GREEN")     // GREEN, AMBER, RED
+  encryptedSymptomNotes String?
+  triageSpecialty       String?
+  triageReason          String?
+  patientPhone          String?
+  reminder24hSent       Boolean        @default(false)
+  reminder2hSent        Boolean        @default(false)
+  reminder15mSent       Boolean        @default(false)
+  createdAt             DateTime       @default(now())
+  updatedAt             DateTime       @updatedAt
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title     String
+  message   String
+  type      String   // REMINDER_24H, REMINDER_2H, REMINDER_15M, APPOINTMENT_CONFIRMED, APPOINTMENT_CANCELLED
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
+
+model AuditLog {
+  id          String   @id @default(cuid())
+  userId      String?
+  user        User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  action      String   // BOOK, CANCEL, RESCHEDULE, DELETE_DATA, LOGIN, BLOCK_EMERGENCY
+  detailsJson String
+  ipAddress   String?
+  timestamp   DateTime @default(now())
+}

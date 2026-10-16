@@ -1,0 +1,139 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgGradMale" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0284c7" />
+      <stop offset="50%" stop-color="#0f766e" />
+      <stop offset="100%" stop-color="#0369a1" />
+    </linearGradient>
+    <linearGradient id="skinToneMale" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#c68652" />
+      <stop offset="100%" stop-color="#ab6935" />
+    </linearGradient>
+    <linearGradient id="coatGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff" />
+      <stop offset="100%" stop-color="#e2e8f0" />
+    </linearGradient>
+    <filter id="glowMale" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="4" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+    <style>
+      @keyframes floatHead {
+        0%, 100% { transform: translateY(0px); }
+        50% { transform: translateY(-3px); }
+      }
+      @keyframes pulseAura {
+        0%, 100% { opacity: 0.35; transform: scale(1); }
+        50% { opacity: 0.7; transform: scale(1.04); }
+      }
+      @keyframes heartbeatWave {
+        0%, 100% { stroke-dashoffset: 0; opacity: 0.6; }
+        50% { stroke-dashoffset: 30; opacity: 1; }
+      }
+      @keyframes blinkEyes {
+        0%, 96%, 100% { transform: scaleY(1); }
+        98% { transform: scaleY(0.1); }
+      }
+      .aura {
+        transform-origin: 100px 100px;
+        animation: pulseAura 3s ease-in-out infinite;
+      }
+      .doctor-body {
+        transform-origin: 100px 140px;
+        animation: floatHead 4s ease-in-out infinite;
+      }
+      .eyes {
+        transform-origin: 100px 85px;
+        animation: blinkEyes 4.5s infinite;
+      }
+      .ekg-line {
+        stroke-dasharray: 60;
+        animation: heartbeatWave 2.5s linear infinite;
+      }
+    </style>
+  </defs>
+
+  <!-- Background Canvas -->
+  <rect width="200" height="200" rx="36" fill="url(#bgGradMale)" />
+
+  <!-- Animated Ambient Aura Rings -->
+  <circle cx="100" cy="100" r="82" fill="none" stroke="#38bdf8" stroke-width="2" opacity="0.3" class="aura" />
+  <circle cx="100" cy="100" r="70" fill="none" stroke="#2dd4bf" stroke-width="1.5" opacity="0.4" class="aura" style="animation-delay: -1.5s;" />
+
+  <!-- Background Clinic Grid / EKG Pulse -->
+  <path d="M 20 155 L 65 155 L 75 140 L 85 170 L 95 148 L 105 158 L 115 155 L 180 155"
+        fill="none" stroke="#a5f3fc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+        class="ekg-line" opacity="0.5" />
+
+  <!-- Doctor Character Group -->
+  <g class="doctor-body">
+    <!-- White Lab Coat Shoulders -->
+    <path d="M 35 200 L 45 148 Q 65 130 100 130 Q 135 130 155 148 L 165 200 Z" fill="url(#coatGrad)" />
+
+    <!-- Formal Inner Shirt & Tie -->
+    <path d="M 85 130 L 100 165 L 115 130 Z" fill="#0284c7" />
+    <path d="M 96 130 L 104 130 L 102 165 L 98 165 Z" fill="#0f172a" />
+    <!-- Coat Lapels -->
+    <path d="M 68 132 L 88 178 L 100 178 L 84 130 Z" fill="#f8fafc" />
+    <path d="M 132 132 L 112 178 L 100 178 L 116 130 Z" fill="#f8fafc" />
+
+    <!-- Stethoscope around neck -->
+    <path d="M 72 134 Q 60 155 76 182 Q 88 195 96 195" fill="none" stroke="#334155" stroke-width="4.5" stroke-linecap="round" />
+    <path d="M 128 134 Q 140 155 124 182 Q 112 195 104 195" fill="none" stroke="#334155" stroke-width="4.5" stroke-linecap="round" />
+    <!-- Chest Piece Bell -->
+    <circle cx="96" cy="194" r="7" fill="#94a3b8" stroke="#0f172a" stroke-width="2" />
+    <circle cx="96" cy="194" r="3" fill="#0ea5e9" />
+
+    <!-- Neck -->
+    <path d="M 86 112 L 86 134 Q 100 142 114 134 L 114 112 Z" fill="#b4733c" />
+
+    <!-- Head & Face -->
+    <ellipse cx="100" cy="88" rx="32" ry="36" fill="url(#skinToneMale)" />
+
+    <!-- Ears -->
+    <ellipse cx="68" cy="88" rx="5" ry="9" fill="#ab6935" />
+    <ellipse cx="132" cy="88" rx="5" ry="9" fill="#ab6935" />
+
+    <!-- Hair -->
+    <path d="M 66 80 Q 70 52 100 50 Q 130 52 134 80 Q 120 62 100 62 Q 80 62 66 80 Z" fill="#1e293b" />
+    <path d="M 66 80 Q 64 68 76 56 Q 100 48 126 56 Q 136 66 134 80 Q 124 64 100 64 Q 76 64 66 80 Z" fill="#0f172a" />
+
+    <!-- Neat Mustache -->
+    <path d="M 86 98 Q 100 94 100 99 Q 100 94 114 98 Q 107 104 100 101 Q 93 104 86 98 Z" fill="#1e293b" />
+
+    <!-- Warm Smile -->
+    <path d="M 90 105 Q 100 114 110 105" fill="none" stroke="#78350f" stroke-width="2.5" stroke-linecap="round" />
+
+    <!-- Eyes & Brows with blink animation -->
+    <g class="eyes">
+      <!-- Eyebrows -->
+      <path d="M 80 75 Q 89 72 94 76" fill="none" stroke="#1e293b" stroke-width="2.5" stroke-linecap="round" />
+      <path d="M 120 75 Q 111 72 106 76" fill="none" stroke="#1e293b" stroke-width="2.5" stroke-linecap="round" />
+      <!-- Eyes -->
+      <ellipse cx="87" cy="82" rx="3.5" ry="4" fill="#0f172a" />
+      <ellipse cx="113" cy="82" rx="3.5" ry="4" fill="#0f172a" />
+      <!-- Eye Sparkles -->
+      <circle cx="88" cy="80.5" r="1.2" fill="#ffffff" />
+      <circle cx="114" cy="80.5" r="1.2" fill="#ffffff" />
+    </g>
+
+    <!-- Professional Glasses -->
+    <rect x="76" y="74" width="20" height="15" rx="4" fill="none" stroke="#334155" stroke-width="1.8" opacity="0.85" />
+    <rect x="104" y="74" width="20" height="15" rx="4" fill="none" stroke="#334155" stroke-width="1.8" opacity="0.85" />
+    <path d="M 96 80 L 104 80" stroke="#334155" stroke-width="2" />
+    <path d="M 68 78 L 76 79" stroke="#334155" stroke-width="1.8" />
+    <path d="M 124 79 L 132 78" stroke="#334155" stroke-width="1.8" />
+
+    <!-- Pocket Badge with Stethoscope Icon -->
+    <rect x="124" y="156" width="20" height="24" rx="3" fill="#ffffff" stroke="#cbd5e1" stroke-width="1" />
+    <rect x="128" y="160" width="12" height="4" rx="1" fill="#0284c7" />
+    <circle cx="134" cy="172" r="3" fill="#10b981" />
+  </g>
+
+  <!-- Live Pulse Badge (Top Right) -->
+  <g transform="translate(156, 16)">
+    <circle cx="12" cy="12" r="12" fill="#047857" opacity="0.3" class="aura" />
+    <circle cx="12" cy="12" r="8" fill="#10b981" />
+    <path d="M 8 12 L 11 15 L 16 9" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+  </g>
+</svg>

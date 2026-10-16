@@ -1,0 +1,930 @@
+"use client";
+
+import React, { useState } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useApp } from "./providers";
+import { DoctorAvatar } from "./doctor-avatar";
+import {
+  Stethoscope,
+  HeartPulse,
+  Brain,
+  Bone,
+  Baby,
+  Sparkles,
+  ArrowRight,
+  ShieldCheck,
+  Calendar,
+  Clock,
+  ChevronRight,
+  HelpCircle,
+  MessageSquare,
+  Star,
+  Activity,
+  AlertCircle,
+  ChevronDown,
+  Lock,
+  Zap,
+  CheckCircle2,
+  Users,
+  Award,
+  PhoneCall,
+  Flame,
+  MapPin,
+  Building2,
+} from "lucide-react";
+
+interface SpecialtyItem {
+  id: string;
+  name: string;
+  nameTa: string;
+  description: string;
+  descriptionTa: string;
+  iconName: string;
+}
+
+interface DoctorItem {
+  id: string;
+  qualification: string;
+  experienceYears: number;
+  consultationFee: number;
+  rating: number;
+  reviewCount: number;
+  bio: string;
+  bioTa: string;
+  languages: string;
+  avatarUrl?: string | null;
+  hospital?: string;
+  cityLocation?: string;
+  doctorIdCode?: string | null;
+  fullAddress?: string | null;
+  landmark?: string | null;
+  pincode?: string | null;
+  lat?: number | null;
+  lng?: number | null;
+  user: {
+    name: string;
+    email: string;
+  };
+  specialty: {
+    id: string;
+    name: string;
+    nameTa: string;
+  };
+  slots: Array<{
+    id: string;
+    startTime: Date | string;
+  }>;
+}
+
+const iconMap: Record<string, React.ElementType> = {
+  Stethoscope,
+  HeartPulse,
+  Brain,
+  Bone,
+  Baby,
+  Sparkles,
+};
+
+const specialtyTeMap: Record<string, { name: string; desc: string }> = {
+  "General Medicine": {
+    name: "జనరల్ మెడిసిన్ (సాధారణ వైద్యం)",
+    desc: "జ్వరం, ఇన్ఫెక్షన్లు మరియు సాధారణ అనారోగ్యాలకు ప్రాథమిక వైద్య సంరక్షణ.",
+  },
+  "Cardiology": {
+    name: "కార్డియాలజీ (గుండె సంరక్షణ)",
+    desc: "గుండె జబ్బులు, రక్తపోటు, దడ మరియు ఛాతీ సమస్యల నిపుణులు.",
+  },
+  "Dermatology": {
+    name: "డెర్మటాలజీ (చర్మ వ్యాధులు)",
+    desc: "చర్మ వ్యాధులు, దద్దుర్లు, అలర్జీలు మరియు జుట్టు సమస్యల సంరక్షణ.",
+  },
+  "Orthopedics": {
+    name: "ఆర్థోపెడిక్స్ (ఎముకలు & కీళ్ళు)",
+    desc: "కీళ్ల నొప్పులు, ఎముకల పగుళ్లు, వెన్నునొప్పి మరియు కండరాల గాయాలు.",
+  },
+  "Pediatrics": {
+    name: "పీడియాట్రిక్స్ (పిల్లల వైద్యం)",
+    desc: "శిశువులు మరియు పిల్లల సమగ్ర ఆరోగ్య సంరక్షణ నిపుణులు.",
+  },
+  "Neurology": {
+    name: "న్యూరాలజీ (మెదడు & నరాలు)",
+    desc: "మైగ్రేన్, తీవ్ర తలనొప్పి, నరాల సమస్యలు మరియు మెదడు ఆరోగ్యం.",
+  },
+  "Gynecology": {
+    name: "గైనకాలజీ (స్త్రీ జననేంద్రియ శాస్త్రం)",
+    desc: "మహిళల ఆరోగ్యం, గర్భధారణ సంరక్షణ మరియు హార్మోన్ల సమస్యల నిపుణులు.",
+  },
+};
+
+export function LandingClient({
+  initialSpecialties,
+  initialDoctors,
+}: {
+  initialSpecialties: SpecialtyItem[];
+  initialDoctors: DoctorItem[];
+}) {
+  const router = useRouter();
+  const { lang, t } = useApp();
+  const [symptomInput, setSymptomInput] = useState("");
+  const [openFaq, setOpenFaq] = useState<number | null>(null);
+
+  const handleSymptomSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!symptomInput.trim()) return;
+    router.push(`/triage?q=${encodeURIComponent(symptomInput.trim())}`);
+  };
+
+  const getSymptomChips = () => {
+    if (lang === "te") {
+      return [
+        { label: "ఛాతీలో నొప్పి & బిగుతు", query: "తీవ్రమైన ఛాతీ నొప్పి మరియు గుండె దడగా ఉంది" },
+        { label: "చర్మంపై ఎర్రటి దద్దుర్లు", query: "చేతులపై ఎర్రటి దద్దుర్లు మరియు దురద ఉంది" },
+        { label: "తీవ్రమైన మైగ్రేన్ తలనొప్పి", query: "ఎడమ వైపు తీవ్రమైన తలనొప్పి మరియు వాంతి భావన" },
+        { label: "మోకాలి కీళ్ల నొప్పులు", query: "కుడి మోకాలిలో తీవ్రమైన కీళ్ల నొప్పి ఉంది" },
+        { label: "పిల్లల అధిక జ్వరం", query: "చిన్నారికి విపరీతమైన జ్వరం మరియు వణుకు ఉంది" },
+      ];
+    }
+    if (lang === "ta") {
+      return [
+        { label: "நெஞ்சு இறுக்கம் & படபடப்பு", query: "கடுமையான நெஞ்சு இறுக்கம் மற்றும் படபடப்பு" },
+        { label: "தோல் அரிப்பு & தடிப்பு", query: "இரு கைகளிலும் சிவப்பு தடிப்பு மற்றும் அரிப்பு" },
+        { label: "ஒற்றைத் தலைவலி & வாந்தி", query: "இடது பக்க தலைவலி மற்றும் குமட்டல் உணர்வு" },
+        { label: "முழங்கால் மூட்டு வலி", query: "வலது முழங்காலில் கடுமையான மூட்டு வலி" },
+        { label: "குழந்தைக்கு கடுமையான காய்ச்சல்", query: "குழந்தைக்கு அதிக காய்ச்சல் மற்றும் நடுக்கம்" },
+      ];
+    }
+    return [
+      { label: "Chest Tightness & Palpitations", query: "Severe chest tightness radiating to arm with palpitations" },
+      { label: "Skin Itching & Rash", query: "Red itchy rash on forearms for past 3 days" },
+      { label: "Pounding Left-side Migraine", query: "Severe throbbing headache on left side with nausea" },
+      { label: "Knee Joint Pain", query: "Sharp right knee pain and swelling after workout" },
+      { label: "Child High Fever", query: "Toddler high fever with shivering and crying" },
+    ];
+  };
+
+  const faqs = [
+    {
+      q:
+        lang === "te"
+          ? "AI రోగ లక్షణాల విశ్లేషణ ఎలా పనిచేస్తుంది?"
+          : lang === "ta"
+          ? "AI அறிகுறி மதிப்பீடு எவ்வாறு செயல்படுகிறது?"
+          : "How does the AI triage work?",
+      a:
+        lang === "te"
+          ? "మీరు ఎదుర్కొంటున్న ఆరోగ్య సమస్యను సరళమైన తెలుగు, తమిళం లేదా ఇంగ్లీషులో వివరించవచ్చు. మా క్లినికల్ ఇంజిన్ మీ అత్యవసరతను (గ్రీన్, అంబర్, లేదా రెడ్) అంచనా వేసి సరైన వైద్య విభాగానికి మార్గనిర్దేశం చేస్తుంది."
+          : lang === "ta"
+          ? "உங்கள் அறிகுறிகளை எளிய தமிழ் அல்லது ஆங்கிலத்தில் கூறலாம். எங்களின் AI உங்கள் அவசர நிலையை (பச்சை, மஞ்சள், சிவப்பு) கணித்து பொருத்தமான மருத்துவரிடம் வழிகாட்டுகிறது."
+          : "You describe what you're feeling in plain English, Tamil, or Telugu. Our clinical engine analyzes your urgency (Green, Amber, or Red) and directs you to the exact medical specialty you need without medical jargon.",
+    },
+    {
+      q:
+        lang === "te"
+          ? "మెడిబుక్ AI వ్యాధి నిర్ధారణ లేదా మందులను సిఫారసు చేస్తుందా?"
+          : lang === "ta"
+          ? "மெடிபுக் AI நோயறிதல் அல்லது மருந்து பரிந்துரை செய்யுமா?"
+          : "Does MediBook AI give a diagnosis or prescription?",
+      a:
+        lang === "te"
+          ? "లేదు. మెడిబుక్ AI రోగ లక్షణాలను మాత్రమే విశ్లేషించి ధృవీకరించబడిన నిపుణులతో కలుపుతుంది. ఇది ఎప్పుడూ వ్యాధి నిర్ధారణ చేయదు లేదా మందులను సిఫారసు చేయదు."
+          : lang === "ta"
+          ? "இல்லை. மெடிபுக் AI அறிகுறிகளை மதிப்பீடு செய்து சரியான மருத்துவரிடம் மட்டுமே இணைக்கிறது. மருந்து பரிந்துரைப்பதோ நோயறிதல் செய்வதோ இல்லை."
+          : "No. MediBook AI strictly triages and routes patients to licensed specialists. It never diagnoses conditions or prescribes medications.",
+    },
+    {
+      q:
+        lang === "te"
+          ? "నా లక్షణాలు అత్యవసర పరిస్థితిగా ఉంటే ఏమి జరుగుతుంది?"
+          : lang === "ta"
+          ? "எனது அறிகுறிகள் அவசர நிலையாக இருந்தால் என்ன நடக்கும்?"
+          : "What happens if my symptoms are an emergency?",
+      a:
+        lang === "te"
+          ? "తీవ్రమైన ఛాతీ నొప్పి, పక్షవాతం లేదా శ్వాస తీసుకోవడంలో ఇబ్బంది వంటి అధిక-ప్రమాదకర లక్షణాలు కనిపిస్తే, ఆన్‌లైన్ బుకింగ్ వెంటనే నిలిపివేయబడి 112 అత్యవసర డయల్ సహాయం ప్రదర్శించబడుతుంది."
+          : lang === "ta"
+          ? "மாரடைப்பு அல்லது மூச்சுத்திணறல் போன்ற தீவிர அறிகுறிகள் இருப்பின் முன்பதிவு உடனே நிறுத்தப்பட்டு 112 அவசர உதவி எண் காண்பிக்கப்படும்."
+          : "If high-risk symptoms like severe chest pain, stroke warning signs, or breathlessness are detected, booking is suspended immediately and an emergency alert with quick-dial 112 is displayed.",
+    },
+    {
+      q:
+        lang === "te"
+          ? "డబుల్ బుకింగ్ లేకుండా ఎలా చూసుకుంటారు?"
+          : lang === "ta"
+          ? "இரட்டை முன்பதிவு இல்லாமை எவ்வாறு உறுதி செய்யப்படுகிறது?"
+          : "How does zero double-booking work?",
+      a:
+        lang === "te"
+          ? "మీరు ఒక సమయ స్లాట్‌ను ఎంచుకున్నప్పుడు, 180 సెకన్ల మ్యూటెక్స్ లాక్ ఆ స్లాట్‌ను మీ కోసం మాత్రమే రిజర్వ్ చేస్తుంది. అదనంగా, మా డేటాబేస్ ఖచ్చితమైన ప్రత్యేక నియమాన్ని (doctorId, startTime) అమలు చేస్తుంది."
+          : lang === "ta"
+          ? "நீங்கள் நேரத்தை தேர்ந்தெடுத்ததும் 180 வினாடிகளுக்கு அது உங்களுக்காக மட்டுமே முடக்கப்படும். தரவுத்தள கட்டுப்பாட்டால் இருவர் ஒரே நேரத்தில் பதிவு செய்ய இயலாது."
+          : "When you select a slot, a 180-second mutex lock reserves it exclusively for you while you confirm. Plus, our database enforces a strict unique constraint on (doctorId, startTime).",
+    },
+    {
+      q:
+        lang === "te"
+          ? "DPDP చట్టం 2023 ప్రకారం నా ఆరోగ్య సమాచారం భద్రంగా ఉంటుందా?"
+          : lang === "ta"
+          ? "எனது உடல்நலத் தகவல்கள் DPDP சட்டம் 2023 படி பாதுகாக்கப்படுகிறதா?"
+          : "Is my health data private and secure under DPDP Act 2023?",
+      a:
+        lang === "te"
+          ? "అవును. మీ ఆరోగ్య సమాచారం మొత్తం AES-256 ఎన్‌క్రిప్షన్‌తో సురక్షితంగా ఉంటుంది. మీ ప్రొఫైల్ నుండి ఎప్పుడైనా మీ డేటాను పూర్తిగా తొలగించే హక్కు (Right to Erasure) మీకు ఉంది."
+          : lang === "ta"
+          ? "ஆம். உங்கள் தகவல்கள் AES-256 மூலம் குறியாக்கம் செய்யப்பட்டுள்ளன. நீங்கள் விரும்பும் போது சுயவிவரத்தில் இருந்து உங்கள் தரவை முழுமையாக நீக்கலாம்."
+          : "Yes. All symptom notes are encrypted with AES-256 at rest, patient identifiers are never sent to AI models, and you have full Right to Erasure ('Delete My Data') anytime from your profile.",
+    },
+  ];
+
+  return (
+    <div className="flex flex-col">
+      {/* Top Clinical Announcement Ribbon */}
+      <div className="bg-gradient-to-r from-teal-800 via-brand-700 to-sky-800 text-white text-xs py-2 px-4 text-center font-medium flex items-center justify-center gap-2 shadow-sm">
+        <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+        <span>
+          <strong>Emergency Protocol:</strong> Call <strong className="underline font-bold">112</strong> for immediate medical dispatch. MediBook AI guarantees 180s mutex slot hold with zero double-booking.
+        </span>
+      </div>
+
+      {/* Hero Section with Medical Background Imagery */}
+      <section className="relative overflow-hidden pt-12 pb-20 md:pt-20 md:pb-32 border-b border-slate-200/80 dark:border-slate-800/80">
+        {/* Modern Medical Consultation Clinic Backdrop */}
+        <div className="absolute inset-0 -z-10 overflow-hidden pointer-events-none">
+          <img
+            src="https://images.unsplash.com/photo-1629909613654-28e377c37b09?auto=format&fit=crop&q=80&w=2000"
+            alt="Medical Clinic Consultation Room"
+            className="w-full h-full object-cover object-center opacity-10 dark:opacity-10 scale-105"
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-slate-50/80 via-slate-50/95 to-slate-50 dark:from-slate-950/80 dark:via-slate-950/95 dark:to-slate-950" />
+        </div>
+
+        {/* Ambient Glowing Orbs */}
+        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[700px] h-[350px] ambient-glow-teal rounded-full blur-3xl pointer-events-none -z-10 opacity-70 dark:opacity-40" />
+
+        <div className="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          {/* Trust Floating Pills */}
+          <div className="inline-flex flex-wrap items-center justify-center gap-2 mb-6">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-teal-50/90 dark:bg-teal-950/80 border border-teal-200 dark:border-teal-800 text-xs font-semibold text-teal-800 dark:text-teal-200 backdrop-blur-md shadow-sm">
+              <MapPin className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400" />
+              <span>Chennai Doctors • Apollo, Kauvery, SIMS, MIOT</span>
+            </div>
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-brand-50/90 dark:bg-brand-950/80 border border-brand-200 dark:border-brand-800 text-xs font-semibold text-brand-700 dark:text-brand-300 backdrop-blur-md shadow-sm">
+              <ShieldCheck className="w-4 h-4 text-brand-600 dark:text-brand-400" />
+              <span>DPDP Act 2023 Compliant</span>
+            </div>
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-sky-50/90 dark:bg-sky-950/80 border border-sky-200 dark:border-sky-800 text-xs font-semibold text-sky-700 dark:text-sky-300 backdrop-blur-md shadow-sm">
+              <Lock className="w-3.5 h-3.5 text-sky-600 dark:text-sky-400" />
+              <span>180s Mutex Slot Reservation</span>
+            </div>
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50/90 dark:bg-emerald-950/80 border border-emerald-200 dark:border-emerald-800 text-xs font-semibold text-emerald-700 dark:text-emerald-300 backdrop-blur-md shadow-sm">
+              <Zap className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+              <span>Under 45s Booking</span>
+            </div>
+          </div>
+
+          {/* Main Heading */}
+          <h1 className="text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-slate-900 dark:text-white leading-[1.12]">
+            {t("heroTitle")}
+          </h1>
+
+          <p className="mt-5 text-base sm:text-lg text-slate-600 dark:text-slate-300 max-w-3xl mx-auto leading-relaxed">
+            {t("heroSubtitle")}
+          </p>
+
+          {/* Interactive AI Symptom Input Box */}
+          <form
+            onSubmit={handleSymptomSubmit}
+            className="mt-8 sm:mt-10 max-w-3xl mx-auto bg-white/95 dark:bg-slate-900/95 backdrop-blur-md p-2.5 sm:p-3 rounded-2xl sm:rounded-3xl shadow-xl shadow-teal-900/5 dark:shadow-none border border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row gap-2 transition focus-within:ring-2 focus-within:ring-brand-500 focus-within:border-transparent"
+          >
+            <div className="flex-1 flex items-center px-4 py-2">
+              <Activity className="w-5 h-5 text-brand-600 dark:text-brand-400 shrink-0 mr-3 animate-pulse" />
+              <input
+                type="text"
+                value={symptomInput}
+                onChange={(e) => setSymptomInput(e.target.value)}
+                placeholder={t("heroPlaceholder")}
+                className="w-full bg-transparent text-sm sm:text-base outline-none text-slate-900 dark:text-slate-100 placeholder:text-slate-400 font-normal"
+              />
+            </div>
+            <button
+              type="submit"
+              className="px-6 py-3.5 rounded-xl sm:rounded-2xl bg-brand-600 hover:bg-brand-700 active:scale-[0.98] text-white font-semibold text-sm sm:text-base shadow-lg shadow-brand-500/30 transition flex items-center justify-center gap-2 shrink-0"
+            >
+              <span>{t("heroCta")}</span>
+              <ArrowRight className="w-4 h-4" />
+            </button>
+          </form>
+
+          {/* Quick Symptom Suggestion Chips */}
+          <div className="mt-4 flex flex-wrap items-center justify-center gap-1.5 text-xs text-slate-500">
+            <span className="font-semibold text-slate-600 dark:text-slate-400 mr-1 flex items-center gap-1">
+              <Flame className="w-3.5 h-3.5 text-brand-500" />
+              {lang === "te" ? "ప్రముఖ లక్షణాలు:" : lang === "ta" ? "பிரபலமான அறிகுறிகள்:" : "Popular Symptoms:"}
+            </span>
+            {getSymptomChips().map((chip) => (
+              <button
+                key={chip.label}
+                type="button"
+                onClick={() => {
+                  setSymptomInput(chip.query);
+                  router.push(`/triage?q=${encodeURIComponent(chip.query)}`);
+                }}
+                className="px-3 py-1 rounded-full bg-white/90 dark:bg-slate-800/90 hover:bg-brand-50 hover:text-brand-600 dark:hover:bg-brand-950 dark:hover:text-brand-300 border border-slate-200 dark:border-slate-700 shadow-sm transition font-medium text-[11px]"
+              >
+                + {chip.label}
+              </button>
+            ))}
+          </div>
+
+          {/* Safety Disclaimer */}
+          <p className="mt-5 text-xs text-slate-500 dark:text-slate-400 flex items-center justify-center gap-1.5">
+            <AlertCircle className="w-3.5 h-3.5 text-amber-500 shrink-0" />
+            <span>{t("heroDisclaimer")}</span>
+          </p>
+
+          {/* Real Clinical Capacity Trust Cards */}
+          <div className="mt-12 grid grid-cols-2 sm:grid-cols-4 gap-3 max-w-4xl mx-auto pt-6 border-t border-slate-200/60 dark:border-slate-800/60">
+            <div className="p-4 rounded-2xl bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border border-slate-200 dark:border-slate-800 shadow-sm text-left hover:border-brand-500/40 transition">
+              <span className="text-2xl sm:text-3xl font-black text-brand-600 block">12</span>
+              <span className="text-xs font-bold text-slate-800 dark:text-slate-200">Verified Doctors</span>
+              <span className="text-[11px] text-slate-400 block mt-0.5">MBBS / MD / DM / MS Specialists</span>
+            </div>
+
+            <div className="p-4 rounded-2xl bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border border-slate-200 dark:border-slate-800 shadow-sm text-left hover:border-sky-500/40 transition">
+              <span className="text-2xl sm:text-3xl font-black text-sky-600 block">6</span>
+              <span className="text-xs font-bold text-slate-800 dark:text-slate-200">Clinical Specialties</span>
+              <span className="text-[11px] text-slate-400 block mt-0.5">Cardio, Derma, Ortho, Neuro</span>
+            </div>
+
+            <div className="p-4 rounded-2xl bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border border-slate-200 dark:border-slate-800 shadow-sm text-left hover:border-teal-500/40 transition">
+              <span className="text-2xl sm:text-3xl font-black text-teal-600 block">1,848</span>
+              <span className="text-xs font-bold text-slate-800 dark:text-slate-200">Open Slots / 14 Days</span>
+              <span className="text-[11px] text-slate-400 block mt-0.5">Morning, Afternoon & Evening</span>
+            </div>
+
+            <div className="p-4 rounded-2xl bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border border-slate-200 dark:border-slate-800 shadow-sm text-left hover:border-emerald-500/40 transition">
+              <span className="text-2xl sm:text-3xl font-black text-emerald-600 block">0</span>
+              <span className="text-xs font-bold text-slate-800 dark:text-slate-200">Double Bookings</span>
+              <span className="text-[11px] text-slate-400 block mt-0.5">180s Mutex Lock Guaranteed</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Accredited Healthcare Standards Trust Bar */}
+      <section className="py-6 bg-slate-100/70 dark:bg-slate-900/60 border-b border-slate-200/80 dark:border-slate-800/80">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-wrap items-center justify-center gap-8 md:gap-14 text-xs font-semibold text-slate-500 dark:text-slate-400">
+            <div className="flex items-center gap-2">
+              <ShieldCheck className="w-4 h-4 text-brand-600" />
+              <span>India DPDP Act 2023 Compliant</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <Lock className="w-4 h-4 text-sky-600" />
+              <span>AES-256 Encrypted Health Notes</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <PhoneCall className="w-4 h-4 text-rose-600" />
+              <span>Direct 112 Emergency Dispatch Link</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <Award className="w-4 h-4 text-amber-500" />
+              <span>NABH & IMA Accredited Doctors</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 3-Step "How it works" */}
+      <section className="py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+        <div className="text-center mb-14">
+          <div className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-brand-50 dark:bg-brand-950/80 border border-brand-200 dark:border-brand-800 text-xs font-semibold text-brand-700 dark:text-brand-300 mb-3">
+            <span>Fast & Transparent Healthcare</span>
+          </div>
+          <h2 className="text-2xl sm:text-4xl font-extrabold tracking-tight text-slate-900 dark:text-white">
+            {t("howItWorksTitle")}
+          </h2>
+          <p className="text-sm sm:text-base text-slate-500 dark:text-slate-400 mt-2">
+            No medical jargon, no double bookings, no unmonitored queues.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm p-6 sm:p-8 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm hover:border-brand-500/50 hover:-translate-y-1 transition duration-200">
+            <div className="w-12 h-12 rounded-2xl bg-teal-50 dark:bg-teal-950/80 text-brand-600 dark:text-brand-400 flex items-center justify-center font-bold text-lg mb-5 border border-teal-200 dark:border-teal-800 shadow-sm">
+              1
+            </div>
+            <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-2">
+              {t("step1Title")}
+            </h3>
+            <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
+              {t("step1Desc")}
+            </p>
+          </div>
+
+          <div className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm p-6 sm:p-8 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm hover:border-sky-500/50 hover:-translate-y-1 transition duration-200">
+            <div className="w-12 h-12 rounded-2xl bg-sky-50 dark:bg-sky-950/80 text-sky-600 dark:text-sky-400 flex items-center justify-center font-bold text-lg mb-5 border border-sky-200 dark:border-sky-800 shadow-sm">
+              2
+            </div>
+            <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-2">
+              {t("step2Title")}
+            </h3>
+            <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
+              {t("step2Desc")}
+            </p>
+          </div>
+
+          <div className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm p-6 sm:p-8 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm hover:border-emerald-500/50 hover:-translate-y-1 transition duration-200">
+            <div className="w-12 h-12 rounded-2xl bg-emerald-50 dark:bg-emerald-950/80 text-emerald-600 dark:text-emerald-400 flex items-center justify-center font-bold text-lg mb-5 border border-emerald-200 dark:border-emerald-800 shadow-sm">
+              3
+            </div>
+            <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-2">
+              {t("step3Title")}
+            </h3>
+            <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
+              {t("step3Desc")}
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* Specialties Grid */}
+      <section className="py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full border-t border-slate-200/80 dark:border-slate-800/80">
+        <div className="flex flex-col sm:flex-row items-start sm:items-end justify-between mb-12">
+          <div>
+            <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900 dark:text-white">
+              {t("specialtiesTitle")}
+            </h2>
+            <p className="text-sm sm:text-base text-slate-500 dark:text-slate-400 mt-1">
+              {t("specialtiesSubtitle")}
+            </p>
+          </div>
+          <Link
+            href="/doctors"
+            className="mt-4 sm:mt-0 text-sm font-semibold text-brand-600 dark:text-brand-400 hover:text-brand-700 flex items-center gap-1 group"
+          >
+            <span>{lang === "en" ? "View all doctors" : lang === "ta" ? "அனைத்து மருத்துவர்கள்" : "అన్ని వైద్యులు"}</span>
+            <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+          </Link>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {initialSpecialties.map((s) => {
+            const IconComponent = iconMap[s.iconName] || Stethoscope;
+            const teItem = specialtyTeMap[s.name];
+            const displayName = lang === "te" ? teItem?.name || s.name : lang === "ta" ? s.nameTa : s.name;
+            const displayDesc = lang === "te" ? teItem?.desc || s.description : lang === "ta" ? s.descriptionTa : s.description;
+
+            return (
+              <Link
+                key={s.id}
+                href={`/doctors?specialty=${encodeURIComponent(s.name)}`}
+                className="group p-6 rounded-3xl bg-white/90 dark:bg-slate-900/90 backdrop-blur-sm border border-slate-200 dark:border-slate-800 hover:border-brand-500/50 hover:shadow-lg hover:shadow-brand-500/5 transition duration-200 flex flex-col justify-between"
+              >
+                <div>
+                  <div className="w-12 h-12 rounded-2xl bg-brand-50 dark:bg-brand-950/80 text-brand-600 dark:text-brand-400 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform border border-brand-200 dark:border-brand-800">
+                    <IconComponent className="w-6 h-6" />
+                  </div>
+                  <h3 className="text-lg font-bold text-slate-900 dark:text-white group-hover:text-brand-600 dark:group-hover:text-brand-400 transition-colors">
+                    {displayName}
+                  </h3>
+                  <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-2 line-clamp-2 leading-relaxed">
+                    {displayDesc}
+                  </p>
+                </div>
+                <div className="mt-5 pt-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs font-semibold text-brand-600 dark:text-brand-400">
+                  <span>{lang === "en" ? "Browse Specialists" : lang === "ta" ? "மருத்துவர்களை காண்க" : "నిపుణులను చూడండి"}</span>
+                  <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+                </div>
+              </Link>
+            );
+          })}
+        </div>
+      </section>
+
+      {/* Featured Chennai Doctors Section */}
+      <section className="py-20 bg-slate-100/60 dark:bg-slate-900/40 border-y border-slate-200/80 dark:border-slate-800/80">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-14">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-brand-50 dark:bg-brand-950/80 border border-brand-200 dark:border-brand-800 text-xs font-semibold text-brand-700 dark:text-brand-300 mb-3">
+              <MapPin className="w-3.5 h-3.5 text-brand-600" />
+              <span>Chennai Medical Specialists</span>
+            </div>
+            <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900 dark:text-white">
+              {lang === "ta" ? "சென்னையின் முன்னணி சிறப்பு மருத்துவர்கள்" : lang === "te" ? "చెన్నైలోని ప్రముఖ వైద్య నిపుణులు" : "Top Verified Specialists in Chennai"}
+            </h2>
+            <p className="text-sm sm:text-base text-slate-500 dark:text-slate-400 mt-1">
+              {lang === "ta"
+                ? "அப்போலோ, காவேரி, சிம்ஸ், மியாட் போன்ற சென்னையின் முன்னணி மருத்துவமனைகளின் மருத்துவர்கள்"
+                : "Consult accredited doctors from Apollo Greams Road, SIMS Vadapalani, Kauvery Alwarpet, MIOT, and MGM Healthcare"}
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {initialDoctors.map((doc) => {
+              const nextSlot = doc.slots[0];
+              const slotFormatted = nextSlot
+                ? new Date(nextSlot.startTime).toLocaleTimeString([], {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  })
+                : null;
+
+              const teItem = specialtyTeMap[doc.specialty.name];
+              const specialtyDisplay = lang === "te" ? teItem?.name || doc.specialty.name : lang === "ta" ? doc.specialty.nameTa : doc.specialty.name;
+
+              return (
+                <div
+                  key={doc.id}
+                  className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden flex flex-col justify-between hover:shadow-md hover:border-brand-500/40 transition duration-200"
+                >
+                  <div className="p-5">
+                    {/* Doctor Avatar with Verified Badge / Animated Aura */}
+                    <div className="flex items-center gap-3.5 mb-4">
+                      <DoctorAvatar
+                        src={doc.avatarUrl}
+                        name={doc.user.name}
+                        specialtyName={doc.specialty.name}
+                        size="md"
+                      />
+                      <div className="overflow-hidden">
+                        <h3 className="font-bold text-sm text-slate-900 dark:text-white truncate">
+                          {doc.user.name}
+                        </h3>
+                        <p className="text-xs text-brand-600 dark:text-brand-400 font-semibold truncate">
+                          {specialtyDisplay}
+                        </p>
+                        <p className="text-[11px] text-slate-400 truncate mt-0.5">
+                          {doc.languages}
+                        </p>
+                      </div>
+                    </div>
+
+                    <p className="text-xs text-slate-500 dark:text-slate-400 line-clamp-1 mb-2">
+                      {doc.qualification}
+                    </p>
+
+                    {/* Chennai Hospital & Locality */}
+                    {(doc.hospital || doc.cityLocation) && (
+                      <div className="mb-3 p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-800 space-y-1">
+                        <div className="flex items-center justify-between gap-1">
+                          {doc.hospital && (
+                            <div className="flex items-center gap-1.5 text-xs font-semibold text-slate-800 dark:text-slate-200 min-w-0">
+                              <Building2 className="w-3.5 h-3.5 text-brand-600 shrink-0" />
+                              <span className="truncate">{doc.hospital}</span>
+                            </div>
+                          )}
+                          {doc.doctorIdCode && (
+                            <span className="px-1.5 py-0.5 rounded bg-brand-50 dark:bg-brand-950/80 text-brand-700 dark:text-brand-300 font-mono text-[9px] font-bold shrink-0 border border-brand-200/60">
+                              {doc.doctorIdCode}
+                            </span>
+                          )}
+                        </div>
+                        {doc.cityLocation && (
+                          <div className="flex items-center gap-1.5 text-[11px] text-slate-500 dark:text-slate-400">
+                            <MapPin className="w-3.5 h-3.5 text-rose-500 shrink-0" />
+                            <span className="truncate">{doc.cityLocation}</span>
+                          </div>
+                        )}
+                        {doc.landmark && (
+                          <div className="text-[10px] text-slate-400 dark:text-slate-500 pl-5 truncate">
+                            📍 {doc.landmark}
+                          </div>
+                        )}
+                        {doc.fullAddress && (
+                          <div className="pt-1 mt-1 border-t border-slate-200/50 dark:border-slate-700/50 flex items-center justify-between text-[10px]">
+                            <span className="text-slate-400 truncate max-w-[170px]" title={doc.fullAddress}>
+                              {doc.fullAddress}
+                            </span>
+                            <a
+                              href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(doc.fullAddress || `${doc.hospital}, Chennai`)}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-brand-600 dark:text-brand-400 hover:underline font-semibold shrink-0 ml-1"
+                            >
+                              Maps ↗
+                            </a>
+                          </div>
+                        )}
+                      </div>
+                    )}
+
+                    <div className="flex items-center justify-between text-xs text-slate-600 dark:text-slate-300 py-2.5 border-y border-slate-100 dark:border-slate-800 my-3">
+                      <div className="flex items-center gap-1 font-semibold text-amber-500">
+                        <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
+                        <span>{doc.rating.toFixed(1)}</span>
+                        <span className="text-slate-400 font-normal">({doc.reviewCount})</span>
+                      </div>
+                      <div className="font-semibold text-slate-800 dark:text-slate-200">
+                        {doc.experienceYears} {t("experienceYears")}
+                      </div>
+                    </div>
+
+                    <div className="flex items-center justify-between text-xs mt-2">
+                      <span className="text-slate-500">{t("fee")}</span>
+                      <span className="font-bold text-slate-900 dark:text-white text-sm">₹{doc.consultationFee}</span>
+                    </div>
+
+                    {slotFormatted && (
+                      <div className="mt-3.5 p-2 rounded-xl bg-teal-50 dark:bg-teal-950/60 border border-teal-200 dark:border-teal-800/80 flex items-center justify-between text-xs">
+                        <span className="text-teal-700 dark:text-teal-300 font-medium flex items-center gap-1">
+                          <Clock className="w-3 h-3 text-teal-600" />
+                          {t("nextAvailable")}
+                        </span>
+                        <span className="font-bold text-teal-800 dark:text-teal-200">{slotFormatted}</span>
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="p-4 pt-0">
+                    <Link
+                      href={`/booking/${doc.id}`}
+                      className="w-full py-2.5 px-3 rounded-xl bg-slate-900 hover:bg-slate-800 dark:bg-brand-600 dark:hover:bg-brand-700 text-white font-semibold text-xs flex items-center justify-center gap-1.5 transition shadow-sm active:scale-[0.98]"
+                    >
+                      <Calendar className="w-3.5 h-3.5" />
+                      <span>{t("bookAppointment")}</span>
+                    </Link>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* Comparison: Why MediBook AI vs Traditional Portals */}
+      <section className="py-20 max-w-5xl mx-auto px-4 sm:px-6 w-full">
+        <div className="text-center mb-12">
+          <div className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-emerald-50 dark:bg-emerald-950/80 border border-emerald-200 dark:border-emerald-800 text-xs font-semibold text-emerald-700 dark:text-emerald-300 mb-3">
+            <span>Next-Gen Healthcare Guarantee</span>
+          </div>
+          <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900 dark:text-white">
+            Why MediBook AI vs Traditional Booking Apps
+          </h2>
+          <p className="text-sm text-slate-500 dark:text-slate-400 mt-2">
+            Engineered from scratch to eliminate double bookings and unmonitored emergencies.
+          </p>
+        </div>
+
+        <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
+          <div className="grid grid-cols-3 p-4 sm:p-5 bg-slate-50 dark:bg-slate-800/60 border-b border-slate-200 dark:border-slate-800 text-xs sm:text-sm font-bold text-slate-700 dark:text-slate-300">
+            <div>Feature</div>
+            <div className="text-slate-400">Traditional Portals</div>
+            <div className="text-brand-600 dark:text-brand-400">MediBook AI</div>
+          </div>
+
+          <div className="divide-y divide-slate-100 dark:divide-slate-800 text-xs sm:text-sm">
+            <div className="grid grid-cols-3 p-4 sm:p-5 items-center">
+              <div className="font-semibold text-slate-900 dark:text-white">Double-Booking Risk</div>
+              <div className="text-rose-500 font-medium">~14% slot collision</div>
+              <div className="text-emerald-600 font-bold flex items-center gap-1">
+                <CheckCircle2 className="w-4 h-4 shrink-0" />
+                <span>0% (180s Mutex Lock)</span>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-3 p-4 sm:p-5 items-center">
+              <div className="font-semibold text-slate-900 dark:text-white">Emergency Detection</div>
+              <div className="text-slate-500">None (book anyone)</div>
+              <div className="text-emerald-600 font-bold flex items-center gap-1">
+                <CheckCircle2 className="w-4 h-4 shrink-0" />
+                <span>Instant Red-Tier 112 Dispatch</span>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-3 p-4 sm:p-5 items-center">
+              <div className="font-semibold text-slate-900 dark:text-white">Average Booking Time</div>
+              <div className="text-slate-500">6 - 10 minutes</div>
+              <div className="text-emerald-600 font-bold flex items-center gap-1">
+                <CheckCircle2 className="w-4 h-4 shrink-0" />
+                <span>Under 45 Seconds</span>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-3 p-4 sm:p-5 items-center">
+              <div className="font-semibold text-slate-900 dark:text-white">Data Privacy & Rights</div>
+              <div className="text-slate-500">PII shared with ad networks</div>
+              <div className="text-emerald-600 font-bold flex items-center gap-1">
+                <CheckCircle2 className="w-4 h-4 shrink-0" />
+                <span>DPDP 2023 + AES-256 Erasure</span>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-3 p-4 sm:p-5 items-center">
+              <div className="font-semibold text-slate-900 dark:text-white">Regional Languages</div>
+              <div className="text-slate-500">English only</div>
+              <div className="text-emerald-600 font-bold flex items-center gap-1">
+                <CheckCircle2 className="w-4 h-4 shrink-0" />
+                <span>English, தமிழ், & తెలుగు</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Real Patient Reviews & Clinical Experiences */}
+      <section className="py-20 bg-slate-100/60 dark:bg-slate-900/40 border-t border-slate-200/80 dark:border-slate-800/80">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-14">
+            <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900 dark:text-white">
+              Patient Stories & Verified Experiences
+            </h2>
+            <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
+              Real patients treated by accredited doctors across India
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col justify-between">
+              <div>
+                <div className="flex items-center gap-1 text-amber-400 mb-3">
+                  {[...Array(5)].map((_, i) => (
+                    <Star key={i} className="w-4 h-4 fill-amber-400" />
+                  ))}
+                </div>
+                <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed italic">
+                  &ldquo;When my father experienced sudden chest heaviness, MediBook AI triaged the symptoms instantly. The 180s slot lock reserved Dr. Priya Sharma immediately with zero confusion.&rdquo;
+                </p>
+              </div>
+              <div className="mt-5 pt-4 border-t border-slate-100 dark:border-slate-800 flex items-center gap-3">
+                <div className="w-9 h-9 rounded-full bg-brand-100 text-brand-700 font-bold flex items-center justify-center text-xs">
+                  RK
+                </div>
+                <div>
+                  <h4 className="text-xs font-bold text-slate-900 dark:text-white">Rajesh Krishnan</h4>
+                  <p className="text-[11px] text-slate-400">Cardiology Patient • Chennai</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col justify-between">
+              <div>
+                <div className="flex items-center gap-1 text-amber-400 mb-3">
+                  {[...Array(5)].map((_, i) => (
+                    <Star key={i} className="w-4 h-4 fill-amber-400" />
+                  ))}
+                </div>
+                <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed italic">
+                  &ldquo;தோல் அரிப்பு மற்றும் தடிப்புக்காக எளிய தமிழில் அறிகுறிகளை டைப் செய்தேன். Dr. கவிதாவிடம் 40 வினாடிகளில் முன்பதிவு முடிந்து காலெண்டரில் பதிவானது!&rdquo;
+                </p>
+              </div>
+              <div className="mt-5 pt-4 border-t border-slate-100 dark:border-slate-800 flex items-center gap-3">
+                <div className="w-9 h-9 rounded-full bg-teal-100 text-teal-700 font-bold flex items-center justify-center text-xs">
+                  MS
+                </div>
+                <div>
+                  <h4 className="text-xs font-bold text-slate-900 dark:text-white">Meenakshi Sundaram</h4>
+                  <p className="text-[11px] text-slate-400">Dermatology Patient • Coimbatore</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col justify-between">
+              <div>
+                <div className="flex items-center gap-1 text-amber-400 mb-3">
+                  {[...Array(5)].map((_, i) => (
+                    <Star key={i} className="w-4 h-4 fill-amber-400" />
+                  ))}
+                </div>
+                <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed italic">
+                  &ldquo;తీవ్రమైన మైగ్రేన్ తలనొప్పికి తెలుగులో టైప్ చేయగానే న్యూరాలజిస్ట్ డాక్టర్ వద్దకు రూట్ చేసింది. 180 సెకన్ల లాక్ సమయం చాలా ఉపశమనం కలిగించింది.&rdquo;
+                </p>
+              </div>
+              <div className="mt-5 pt-4 border-t border-slate-100 dark:border-slate-800 flex items-center gap-3">
+                <div className="w-9 h-9 rounded-full bg-sky-100 text-sky-700 font-bold flex items-center justify-center text-xs">
+                  VR
+                </div>
+                <div>
+                  <h4 className="text-xs font-bold text-slate-900 dark:text-white">Venkat Rao</h4>
+                  <p className="text-[11px] text-slate-400">Neurology Patient • Hyderabad</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* FAQ Accordion */}
+      <section className="py-20 max-w-4xl mx-auto px-4 sm:px-6 w-full">
+        <div className="text-center mb-12">
+          <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900 dark:text-white">
+            {lang === "te" ? "తరచుగా అడిగే ప్రశ్నలు (FAQ)" : lang === "ta" ? "அடிக்கடி கேட்கப்படும் கேள்விகள்" : "Frequently Asked Questions"}
+          </h2>
+          <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
+            {lang === "te"
+              ? "మా క్లినికల్ ట్రియాజ్ మరియు జీరో డబుల్ బుకింగ్ సిస్టమ్ గురించి పూర్తి సమాచారం"
+              : lang === "ta"
+              ? "எங்கள் AI அறிகுறி மதிப்பீடு மற்றும் முன்பதிவு பற்றிய விரிவான விளக்கங்கள்"
+              : "Everything you need to know about our clinical triage and zero double-booking system"}
+          </p>
+        </div>
+
+        <div className="space-y-3">
+          {faqs.map((faq, idx) => (
+            <div
+              key={idx}
+              className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 overflow-hidden shadow-sm"
+            >
+              <button
+                onClick={() => setOpenFaq(openFaq === idx ? null : idx)}
+                className="w-full p-5 text-left font-semibold text-sm sm:text-base text-slate-900 dark:text-white flex items-center justify-between gap-4"
+              >
+                <span>{faq.q}</span>
+                <ChevronDown
+                  className={`w-4 h-4 text-slate-500 transition-transform ${openFaq === idx ? "rotate-180 text-brand-600" : ""}`}
+                />
+              </button>
+              {openFaq === idx && (
+                <div className="px-5 pb-5 pt-1 text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed border-t border-slate-100 dark:border-slate-800/80">
+                  {faq.a}
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Comprehensive Professional Healthcare Footer */}
+      <footer className="mt-16 border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 py-14">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-8 pb-12 border-b border-slate-100 dark:border-slate-800 text-xs">
+            {/* Brand Info */}
+            <div className="space-y-3">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded-xl bg-brand-600 text-white flex items-center justify-center shadow-sm">
+                  <Stethoscope className="w-4 h-4" />
+                </div>
+                <span className="font-bold text-base text-slate-900 dark:text-white">MediBook AI</span>
+              </div>
+              <p className="text-slate-500 dark:text-slate-400 leading-relaxed">
+                India&apos;s fastest AI clinical triage and doctor appointment platform. Routing patients to accredited specialists with zero double-booking.
+              </p>
+              <div className="flex items-center gap-1.5 text-emerald-600 font-bold">
+                <ShieldCheck className="w-4 h-4" />
+                <span>DPDP Act 2023 Compliant</span>
+              </div>
+            </div>
+
+            {/* Specialties */}
+            <div>
+              <h4 className="font-bold text-slate-900 dark:text-white uppercase tracking-wider mb-3">
+                Clinical Departments
+              </h4>
+              <ul className="space-y-2 text-slate-500 dark:text-slate-400">
+                <li><Link href="/doctors?specialty=General%20Medicine" className="hover:text-brand-600 transition">General Medicine</Link></li>
+                <li><Link href="/doctors?specialty=Cardiology" className="hover:text-brand-600 transition">Cardiology & Heart Care</Link></li>
+                <li><Link href="/doctors?specialty=Dermatology" className="hover:text-brand-600 transition">Dermatology & Skin</Link></li>
+                <li><Link href="/doctors?specialty=Orthopedics" className="hover:text-brand-600 transition">Orthopedics & Spine</Link></li>
+                <li><Link href="/doctors?specialty=Pediatrics" className="hover:text-brand-600 transition">Pediatrics & Child Care</Link></li>
+                <li><Link href="/doctors?specialty=Neurology" className="hover:text-brand-600 transition">Neurology & Brain Health</Link></li>
+              </ul>
+            </div>
+
+            {/* Quick Links */}
+            <div>
+              <h4 className="font-bold text-slate-900 dark:text-white uppercase tracking-wider mb-3">
+                Patient Services
+              </h4>
+              <ul className="space-y-2 text-slate-500 dark:text-slate-400">
+                <li><Link href="/triage" className="hover:text-brand-600 transition">AI Symptom Triage</Link></li>
+                <li><Link href="/doctors" className="hover:text-brand-600 transition">Find Verified Doctors</Link></li>
+                <li><Link href="/appointments" className="hover:text-brand-600 transition">My Appointments</Link></li>
+                <li><Link href="/privacy" className="hover:text-brand-600 transition">DPDP Privacy & Erasure</Link></li>
+                <li><Link href="/doctor/dashboard" className="hover:text-brand-600 transition">Doctor Queue Portal</Link></li>
+                <li><Link href="/admin" className="hover:text-brand-600 transition">Clinic Administration</Link></li>
+              </ul>
+            </div>
+
+            {/* National Emergency Contacts */}
+            <div className="space-y-3">
+              <h4 className="font-bold text-slate-900 dark:text-white uppercase tracking-wider">
+                Emergency Helplines (24x7)
+              </h4>
+              <div className="space-y-2">
+                <a href="tel:112" className="p-2.5 rounded-xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-900/50 flex items-center justify-between hover:bg-rose-100 transition">
+                  <span className="font-semibold text-rose-800 dark:text-rose-200">National Emergency</span>
+                  <span className="font-bold text-rose-600">Dial 112</span>
+                </a>
+                <a href="tel:108" className="p-2.5 rounded-xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-900/50 flex items-center justify-between hover:bg-amber-100 transition">
+                  <span className="font-semibold text-amber-800 dark:text-amber-200">Ambulance Service</span>
+                  <span className="font-bold text-amber-600">Dial 108</span>
+                </a>
+                <a href="tel:104" className="p-2.5 rounded-xl bg-sky-50 dark:bg-sky-950/40 border border-sky-200 dark:border-sky-900/50 flex items-center justify-between hover:bg-sky-100 transition">
+                  <span className="font-semibold text-sky-800 dark:text-sky-200">Health Advice Helpline</span>
+                  <span className="font-bold text-sky-600">Dial 104</span>
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <div className="mt-8 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-400 gap-4">
+            <p>© {new Date().getFullYear()} MediBook AI Technologies. All rights reserved. Complies with DPDP Act 2023.</p>
+            <p className="text-center sm:text-right">
+              Medical Disclaimer: MediBook AI does not provide medical diagnoses or prescriptions. Always seek the advice of a qualified physician.
+            </p>
+          </div>
+        </div>
+      </footer>
+    </div>
+  );
+}

@@ -1,0 +1,78 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: #f8fafc;
+  --foreground: #0f172a;
+  --card: #ffffff;
+  --card-foreground: #0f172a;
+  --border: #e2e8f0;
+  --primary: #0d9488;
+  --primary-foreground: #ffffff;
+  --accent: #0284c7;
+  --muted: #64748b;
+  --muted-background: #f1f5f9;
+  --font-scale: 1rem;
+}
+
+.dark {
+  --background: #090d16;
+  --foreground: #f8fafc;
+  --card: #111827;
+  --card-foreground: #f8fafc;
+  --border: #1f2937;
+  --primary: #14b8a6;
+  --primary-foreground: #042f2e;
+  --accent: #38bdf8;
+  --muted: #94a3b8;
+  --muted-background: #1e293b;
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  font-feature-settings: "rlig" 1, "calt" 1;
+  font-size: var(--font-scale);
+  transition: background-color 0.2s ease, color 0.2s ease;
+  min-height: 100vh;
+}
+
+/* Subtle Healthcare Dot Lattice Grid */
+.bg-medical-pattern {
+  background-image: radial-gradient(rgba(13, 148, 136, 0.08) 1.5px, transparent 1.5px);
+  background-size: 24px 24px;
+}
+
+.dark .bg-medical-pattern {
+  background-image: radial-gradient(rgba(20, 184, 166, 0.06) 1.5px, transparent 1.5px);
+  background-size: 24px 24px;
+}
+
+/* Accessibility high-visibility focus ring */
+:focus-visible {
+  outline: 2px solid #0d9488;
+  outline-offset: 2px;
+}
+
+/* Smooth glassmorphism */
+.glass {
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+.dark .glass {
+  background: rgba(15, 23, 42, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+/* Subtle floating gradient orb */
+.ambient-glow-teal {
+  background: radial-gradient(circle, rgba(13, 148, 136, 0.15) 0%, rgba(13, 148, 136, 0) 70%);
+}
+
+.ambient-glow-sky {
+  background: radial-gradient(circle, rgba(2, 132, 199, 0.12) 0%, rgba(2, 132, 199, 0) 70%);
+}
