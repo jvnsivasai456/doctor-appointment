@@ -24,13 +24,33 @@ export async function GET(req: Request) {
     }
 
     if (location && location !== "all") {
-      whereClause.OR = [
-        { cityLocation: { contains: location } },
-        { hospital: { contains: location } },
-        { fullAddress: { contains: location } },
-        { landmark: { contains: location } },
-        { pincode: { contains: location } },
+      const omrKeywords = [
+        "OMR",
+        "Sholinganallur",
+        "Perungudi",
+        "Karapakkam",
+        "Kelambakkam",
+        "Kottivakkam",
+        "Navalur",
+        "Padur",
+        "Pallikaranai",
       ];
+      if (location.toUpperCase() === "OMR") {
+        whereClause.OR = omrKeywords.flatMap((kw) => [
+          { cityLocation: { contains: kw } },
+          { hospital: { contains: kw } },
+          { fullAddress: { contains: kw } },
+          { landmark: { contains: kw } },
+        ]);
+      } else {
+        whereClause.OR = [
+          { cityLocation: { contains: location } },
+          { hospital: { contains: location } },
+          { fullAddress: { contains: location } },
+          { landmark: { contains: location } },
+          { pincode: { contains: location } },
+        ];
+      }
     }
 
     if (query && query.trim()) {

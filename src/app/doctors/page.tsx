@@ -69,8 +69,12 @@ const specialtiesList = [
 
 const chennaiLocalities = [
   "all",
-  "Sholinganallur",
   "OMR",
+  "Sholinganallur",
+  "Perungudi",
+  "Karapakkam",
+  "Kelambakkam",
+  "Pallikaranai",
   "Perumbakkam",
   "Kottivakkam",
   "Alwarpet",
