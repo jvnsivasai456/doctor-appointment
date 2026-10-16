@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useApp } from "./providers";
 import { DoctorAvatar } from "./doctor-avatar";
+import { QuickBookingSection } from "./quick-booking-section";
 import {
   Stethoscope,
   HeartPulse,
@@ -486,6 +487,25 @@ export function LandingClient({
             {t("heroSubtitle")}
           </p>
 
+          {/* Instant Hero Actions */}
+          <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
+            <a
+              href="#book-appointment"
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl bg-gradient-to-r from-brand-600 to-teal-600 hover:from-brand-700 hover:to-teal-700 text-white font-bold text-sm sm:text-base shadow-lg shadow-teal-700/25 active:scale-[0.98] transition cursor-pointer"
+            >
+              <Calendar className="w-4 h-4 text-emerald-200" />
+              <span>{lang === "te" ? "తక్షణ అపాయింట్‌మెంట్ బుక్ చేయండి" : lang === "ta" ? "உடனடி மருத்துவ சந்திப்பு பதிவு செய்க" : "Book Doctor Appointment Now"}</span>
+              <ArrowRight className="w-4 h-4" />
+            </a>
+            <Link
+              href="/doctors"
+              className="inline-flex items-center gap-2 px-5 py-3 rounded-2xl bg-white/90 dark:bg-slate-800/90 hover:bg-slate-50 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 font-semibold text-sm shadow-sm transition"
+            >
+              <Users className="w-4 h-4 text-brand-600 dark:text-brand-400" />
+              <span>{lang === "te" ? "135+ నిపుణులను చూడండి" : lang === "ta" ? "135+ மருத்துவர்களைக் காண்க" : "Browse 135+ Doctors"}</span>
+            </Link>
+          </div>
+
           {/* Multi-Filter Clinical Quick Finder Bar */}
           <div className="mt-8 sm:mt-10 max-w-4xl mx-auto bg-white/95 dark:bg-slate-900/95 backdrop-blur-md p-3 rounded-2xl sm:rounded-3xl shadow-xl shadow-teal-900/5 dark:shadow-none border border-slate-200 dark:border-slate-800 transition">
             <form onSubmit={handleHeroSearch} className="flex flex-col md:flex-row items-center gap-2">
@@ -652,6 +672,9 @@ export function LandingClient({
           </div>
         </div>
       </section>
+
+      {/* Interactive Quick Doctor Appointment Booking Console (Embedded on Home Page) */}
+      <QuickBookingSection doctors={initialDoctors} />
 
       {/* 3-Step "How it works" */}
       <section className="py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">

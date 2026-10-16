@@ -8,23 +8,46 @@ import { releaseLock } from "@/lib/lock-manager";
 export async function POST(req: Request) {
   try {
     const session = await getServerSession(authOptions);
-    if (!session?.user) {
-      return NextResponse.json(
-        { error: "Authentication required to confirm appointment" },
-        { status: 401 }
-      );
-    }
-
-    const patientId = (session.user as any).id;
     const body = await req.json();
     const {
       slotId,
       symptoms,
       patientPhone,
+      patientName,
+      patientEmail,
       urgency = "GREEN",
       triageSpecialty,
       triageReason,
     } = body;
+
+    let patientId = (session?.user as any)?.id;
+
+    // Support instant 1-click home page booking without prior login barrier
+    if (!patientId) {
+      const cleanPhone = (patientPhone || "").replace(/\D/g, "");
+      const email =
+        patientEmail?.trim() ||
+        (cleanPhone ? `patient_${cleanPhone}@medibook.ai` : `guest_${Date.now()}@medibook.ai`);
+      const name = patientName?.trim() || "Patient (Online Booking)";
+
+      let user = await prisma.user.findUnique({
+        where: { email },
+      });
+
+      if (!user) {
+        user = await prisma.user.create({
+          data: {
+            name,
+            email,
+            passwordHash: "instant_patient_booking",
+            role: "PATIENT",
+            dpdpConsent: true,
+            consentTimestamp: new Date(),
+          },
+        });
+      }
+      patientId = user.id;
+    }
 
     if (!slotId) {
       return NextResponse.json({ error: "Missing slotId" }, { status: 400 });
