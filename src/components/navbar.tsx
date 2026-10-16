@@ -18,6 +18,8 @@ import {
   Users,
   Shield,
   Activity,
+  Menu,
+  X,
 } from "lucide-react";
 
 export function Navbar() {
@@ -27,6 +29,7 @@ export function Navbar() {
   const [mounted, setMounted] = useState(false);
   const [notifications, setNotifications] = useState<any[]>([]);
   const [showNotifications, setShowNotifications] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   useEffect(() => {
     setMounted(true);
@@ -47,92 +50,93 @@ export function Navbar() {
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-slate-200/80 bg-white/80 dark:border-slate-800/80 dark:bg-slate-900/80 backdrop-blur-md">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-3">
         {/* Brand */}
-        <Link href="/" className="flex items-center gap-2.5 group">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-600 to-teal-400 flex items-center justify-center text-white shadow-md shadow-brand-500/20 group-hover:scale-105 transition-transform">
+        <Link href="/" className="flex items-center gap-2.5 group shrink-0">
+          <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-600 to-teal-400 flex items-center justify-center text-white shadow-md shadow-brand-500/20 group-hover:scale-105 transition-transform shrink-0">
             <Stethoscope className="w-5 h-5" />
           </div>
-          <div>
-            <span className="font-bold text-lg tracking-tight text-slate-900 dark:text-white flex items-center gap-1.5">
+          <div className="shrink-0">
+            <span className="font-bold text-lg tracking-tight text-slate-900 dark:text-white flex items-center gap-1.5 whitespace-nowrap">
               MediBook <span className="text-brand-600 dark:text-brand-400 font-extrabold text-xs px-1.5 py-0.5 rounded bg-brand-50 dark:bg-brand-950/80 border border-brand-200 dark:border-brand-800">AI</span>
             </span>
           </div>
         </Link>
 
         {/* Center Nav Links */}
-        <nav className="hidden md:flex items-center gap-1 text-sm font-medium text-slate-600 dark:text-slate-300">
+        <nav className="hidden lg:flex items-center gap-1 xl:gap-1.5 text-sm font-medium text-slate-600 dark:text-slate-300">
           <Link
             href="/"
-            className="px-3 py-2 rounded-lg hover:text-brand-600 hover:bg-slate-100 dark:hover:bg-slate-800 transition"
+            className="h-9 px-3 rounded-lg flex items-center whitespace-nowrap shrink-0 hover:text-brand-600 hover:bg-slate-100 dark:hover:bg-slate-800 transition"
           >
             {t("navHome")}
           </Link>
           <Link
             href="/triage"
-            className="px-3 py-2 rounded-lg text-brand-600 dark:text-brand-400 font-semibold bg-brand-50 dark:bg-brand-950/60 hover:bg-brand-100 dark:hover:bg-brand-900/60 transition flex items-center gap-1.5"
+            className="h-9 px-3 rounded-lg text-brand-600 dark:text-brand-400 font-semibold bg-brand-50 dark:bg-brand-950/60 hover:bg-brand-100 dark:hover:bg-brand-900/60 transition flex items-center gap-1.5 whitespace-nowrap shrink-0"
           >
-            <Activity className="w-4 h-4 text-brand-600" />
-            {t("navTriage")}
+            <Activity className="w-4 h-4 text-brand-600 shrink-0" />
+            <span>{t("navTriage")}</span>
           </Link>
           <Link
             href="/doctors"
-            className="px-3 py-2 rounded-lg hover:text-brand-600 hover:bg-slate-100 dark:hover:bg-slate-800 transition flex items-center gap-1.5"
+            className="h-9 px-3 rounded-lg hover:text-brand-600 hover:bg-slate-100 dark:hover:bg-slate-800 transition flex items-center gap-1.5 whitespace-nowrap shrink-0"
           >
-            <Users className="w-4 h-4" />
-            {t("navDoctors")}
+            <Users className="w-4 h-4 shrink-0" />
+            <span>{t("navDoctors")}</span>
           </Link>
           <Link
             href="/book-appointment"
-            className="px-3 py-1.5 rounded-lg text-xs font-bold text-white bg-gradient-to-r from-brand-600 to-teal-600 hover:from-brand-700 hover:to-teal-700 shadow-sm transition flex items-center gap-1.5"
+            className="h-9 px-3.5 rounded-lg text-xs font-bold text-white bg-gradient-to-r from-brand-600 to-teal-600 hover:from-brand-700 hover:to-teal-700 shadow-sm transition flex items-center gap-1.5 whitespace-nowrap shrink-0"
           >
-            <Calendar className="w-3.5 h-3.5" />
+            <Calendar className="w-3.5 h-3.5 shrink-0" />
             <span>Book Appointment</span>
           </Link>
 
           {session?.user && (
             <Link
               href="/appointments"
-              className="px-3 py-2 rounded-lg hover:text-brand-600 hover:bg-slate-100 dark:hover:bg-slate-800 transition flex items-center gap-1.5"
+              className="h-9 px-3 rounded-lg hover:text-brand-600 hover:bg-slate-100 dark:hover:bg-slate-800 transition flex items-center gap-1.5 whitespace-nowrap shrink-0"
             >
-              <Calendar className="w-4 h-4" />
-              {t("navAppointments")}
+              <Calendar className="w-4 h-4 shrink-0" />
+              <span>{t("navAppointments")}</span>
             </Link>
           )}
 
           {userRole === "DOCTOR" && (
             <Link
               href="/doctor/dashboard"
-              className="px-3 py-2 rounded-lg text-emerald-600 dark:text-emerald-400 font-semibold bg-emerald-50 dark:bg-emerald-950/50 hover:bg-emerald-100 transition"
+              className="h-9 px-3 rounded-lg text-emerald-600 dark:text-emerald-400 font-semibold bg-emerald-50 dark:bg-emerald-950/50 hover:bg-emerald-100 transition flex items-center whitespace-nowrap shrink-0"
             >
-              {t("navDoctorQueue")}
+              <span>{t("navDoctorQueue")}</span>
             </Link>
           )}
 
           {userRole === "ADMIN" && (
             <Link
               href="/admin"
-              className="px-3 py-2 rounded-lg text-purple-600 dark:text-purple-400 font-semibold bg-purple-50 dark:bg-purple-950/50 hover:bg-purple-100 transition flex items-center gap-1.5"
+              className="h-9 px-3 rounded-lg text-purple-600 dark:text-purple-400 font-semibold bg-purple-50 dark:bg-purple-950/50 hover:bg-purple-100 transition flex items-center gap-1.5 whitespace-nowrap shrink-0"
             >
-              <Shield className="w-4 h-4" />
-              {t("navAdmin")}
+              <Shield className="w-4 h-4 shrink-0" />
+              <span>{t("navAdmin")}</span>
             </Link>
           )}
         </nav>
 
         {/* Right Controls */}
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
           {/* Mobile Quick Book Button */}
           <Link
             href="/book-appointment"
-            className="md:hidden flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-bold text-white bg-gradient-to-r from-brand-600 to-teal-600 hover:from-brand-700 hover:to-teal-700 shadow-sm transition"
+            className="lg:hidden flex items-center gap-1 h-9 px-2.5 rounded-lg text-xs font-bold text-white bg-gradient-to-r from-brand-600 to-teal-600 hover:from-brand-700 hover:to-teal-700 shadow-sm transition shrink-0 whitespace-nowrap"
             title="Book Doctor Appointment"
           >
             <Calendar className="w-3.5 h-3.5" />
             <span>Book</span>
           </Link>
-          {/* Font Size Modifier */}
-          <div className="flex items-center bg-slate-100 dark:bg-slate-800 rounded-lg p-0.5 border border-slate-200 dark:border-slate-700">
+
+          {/* Font Size Modifier (visible on xl+ displays) */}
+          <div className="hidden xl:flex items-center bg-slate-100 dark:bg-slate-800 rounded-lg p-0.5 border border-slate-200 dark:border-slate-700 shrink-0">
             <button
               onClick={() => setFontSize("small")}
               aria-label="Decrease text size"
@@ -160,16 +164,16 @@ export function Navbar() {
           </div>
 
           {/* Language Switcher */}
-          <div className="relative">
+          <div className="relative shrink-0">
             <select
               value={lang}
               onChange={(e) => setLang(e.target.value as any)}
-              className="px-2 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 text-xs font-semibold bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 transition outline-none cursor-pointer"
+              className="h-9 px-2.5 py-1 rounded-lg border border-slate-200 dark:border-slate-700 text-xs font-semibold bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 transition outline-none cursor-pointer"
               title="Switch Language"
             >
-              <option value="en">English (EN)</option>
-              <option value="ta">தமிழ் (Tamil)</option>
-              <option value="te">తెలుగు (Telugu)</option>
+              <option value="en">EN</option>
+              <option value="ta">தமிழ்</option>
+              <option value="te">తెలుగు</option>
             </select>
           </div>
 
@@ -177,7 +181,7 @@ export function Navbar() {
           {mounted && (
             <button
               onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-              className="p-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 transition"
+              className="h-9 w-9 flex items-center justify-center rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 transition shrink-0"
               aria-label="Toggle theme"
             >
               {theme === "dark" ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4 text-slate-600" />}
@@ -186,10 +190,10 @@ export function Navbar() {
 
           {/* Notifications Bell (for logged in users) */}
           {session?.user && (
-            <div className="relative">
+            <div className="relative shrink-0">
               <button
                 onClick={() => setShowNotifications(!showNotifications)}
-                className="relative p-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 transition"
+                className="relative h-9 w-9 flex items-center justify-center rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 transition"
                 aria-label="Notifications"
               >
                 <Bell className="w-4 h-4" />
@@ -231,10 +235,10 @@ export function Navbar() {
 
           {/* User Profile / Auth Button */}
           {session?.user ? (
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1.5 shrink-0">
               <Link
                 href="/profile"
-                className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-semibold"
+                className="hidden sm:flex h-9 items-center gap-2 px-3 rounded-lg bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-semibold whitespace-nowrap"
               >
                 <User className="w-3.5 h-3.5 text-brand-600" />
                 <span className="max-w-[100px] truncate">{session.user.name || session.user.email}</span>
@@ -244,7 +248,7 @@ export function Navbar() {
               </Link>
               <button
                 onClick={() => signOut({ callbackUrl: "/" })}
-                className="p-2 rounded-lg border border-rose-200 dark:border-rose-900/40 text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition"
+                className="h-9 w-9 flex items-center justify-center rounded-lg border border-rose-200 dark:border-rose-900/40 text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition shrink-0"
                 title={t("navLogout")}
                 aria-label="Sign out"
               >
@@ -252,23 +256,122 @@ export function Navbar() {
               </button>
             </div>
           ) : (
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1.5 shrink-0">
               <Link
                 href="/auth/login"
-                className="px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition"
+                className="h-9 px-3 rounded-lg text-xs font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition flex items-center whitespace-nowrap"
               >
                 {t("navLogin")}
               </Link>
               <Link
                 href="/auth/register"
-                className="px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-brand-600 hover:bg-brand-700 text-white shadow-sm shadow-brand-500/20 transition"
+                className="h-9 px-3.5 rounded-lg text-xs font-semibold bg-brand-600 hover:bg-brand-700 text-white shadow-sm shadow-brand-500/20 transition flex items-center whitespace-nowrap"
               >
                 {t("navRegister")}
               </Link>
             </div>
           )}
+
+          {/* Mobile / Tablet Menu Toggle */}
+          <button
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className="lg:hidden h-9 w-9 flex items-center justify-center rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 transition shrink-0"
+            aria-label="Toggle navigation menu"
+          >
+            {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+          </button>
         </div>
       </div>
+
+      {/* Mobile / Tablet Dropdown Menu */}
+      {mobileMenuOpen && (
+        <div className="lg:hidden border-t border-slate-200 dark:border-slate-800 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md px-4 py-3 space-y-2 shadow-lg animate-in slide-in-from-top-2 duration-150">
+          <Link
+            href="/"
+            onClick={() => setMobileMenuOpen(false)}
+            className="flex items-center px-3 py-2 rounded-lg text-sm font-medium hover:bg-slate-100 dark:hover:bg-slate-800 transition"
+          >
+            {t("navHome")}
+          </Link>
+          <Link
+            href="/triage"
+            onClick={() => setMobileMenuOpen(false)}
+            className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-semibold text-brand-600 dark:text-brand-400 bg-brand-50 dark:bg-brand-950/60 hover:bg-brand-100 transition"
+          >
+            <Activity className="w-4 h-4 text-brand-600" />
+            <span>{t("navTriage")}</span>
+          </Link>
+          <Link
+            href="/doctors"
+            onClick={() => setMobileMenuOpen(false)}
+            className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium hover:bg-slate-100 dark:hover:bg-slate-800 transition"
+          >
+            <Users className="w-4 h-4" />
+            <span>{t("navDoctors")}</span>
+          </Link>
+          <Link
+            href="/book-appointment"
+            onClick={() => setMobileMenuOpen(false)}
+            className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-bold text-white bg-gradient-to-r from-brand-600 to-teal-600 shadow-sm"
+          >
+            <Calendar className="w-4 h-4" />
+            <span>Book Appointment</span>
+          </Link>
+          {session?.user && (
+            <Link
+              href="/appointments"
+              onClick={() => setMobileMenuOpen(false)}
+              className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium hover:bg-slate-100 dark:hover:bg-slate-800 transition"
+            >
+              <Calendar className="w-4 h-4" />
+              <span>{t("navAppointments")}</span>
+            </Link>
+          )}
+          {userRole === "DOCTOR" && (
+            <Link
+              href="/doctor/dashboard"
+              onClick={() => setMobileMenuOpen(false)}
+              className="flex items-center px-3 py-2 rounded-lg text-sm font-semibold text-emerald-600 bg-emerald-50 dark:bg-emerald-950/50"
+            >
+              <span>{t("navDoctorQueue")}</span>
+            </Link>
+          )}
+          {userRole === "ADMIN" && (
+            <Link
+              href="/admin"
+              onClick={() => setMobileMenuOpen(false)}
+              className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-semibold text-purple-600 bg-purple-50 dark:bg-purple-950/50"
+            >
+              <Shield className="w-4 h-4" />
+              <span>{t("navAdmin")}</span>
+            </Link>
+          )}
+          {/* Mobile font size buttons */}
+          <div className="pt-2 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs text-slate-500">
+            <span>{t("fontScale")}</span>
+            <div className="flex items-center bg-slate-100 dark:bg-slate-800 rounded-lg p-0.5 border border-slate-200 dark:border-slate-700">
+              <button
+                onClick={() => setFontSize("small")}
+                className={`px-2 py-0.5 font-bold rounded ${fontSize === "small" ? "bg-white dark:bg-slate-900 shadow-sm text-brand-600" : ""}`}
+              >
+                A-
+              </button>
+              <button
+                onClick={() => setFontSize("normal")}
+                className={`px-2 py-0.5 font-bold rounded ${fontSize === "normal" ? "bg-white dark:bg-slate-900 shadow-sm text-brand-600" : ""}`}
+              >
+                A
+              </button>
+              <button
+                onClick={() => setFontSize("large")}
+                className={`px-2 py-0.5 font-bold rounded ${fontSize === "large" ? "bg-white dark:bg-slate-900 shadow-sm text-brand-600" : ""}`}
+              >
+                A+
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </header>
   );
 }
