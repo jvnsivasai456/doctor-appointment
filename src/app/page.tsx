@@ -29,7 +29,7 @@ export default async function HomePage() {
       },
     },
     orderBy: { rating: "desc" },
-    take: 40,
+    take: 60,
   });
 
   return (

@@ -70,17 +70,21 @@ const specialtiesList = [
 const chennaiLocalities = [
   "all",
   "OMR",
+  "Vadapalani",
+  "Alwarpet",
+  "Manapakkam",
+  "Chromepet",
+  "Greams Road",
+  "Adyar",
+  "Anna Nagar",
+  "Shenoy Nagar",
+  "Chetpet",
+  "Velachery",
   "Sholinganallur",
   "Perungudi",
   "Karapakkam",
   "Kelambakkam",
   "Pallikaranai",
-  "Alwarpet",
-  "Vadapalani",
-  "Greams Road",
-  "Adyar",
-  "Anna Nagar",
-  "Velachery",
 ];
 
 function DoctorsDirectoryContent() {

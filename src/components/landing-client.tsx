@@ -130,7 +130,9 @@ export function LandingClient({
   const { lang, t } = useApp();
   const [symptomInput, setSymptomInput] = useState("");
   const [openFaq, setOpenFaq] = useState<number | null>(null);
-  const [activeDoctorTab, setActiveDoctorTab] = useState<"all" | "omr" | "alwarpet" | "vadapalani" | "greams" | "adyar" | "annanagar">("all");
+  const [activeDoctorTab, setActiveDoctorTab] = useState<
+    "all" | "omr" | "vadapalani" | "alwarpet" | "miot" | "rela" | "greams" | "adyar" | "annanagar" | "billroth" | "mehta"
+  >("all");
   const [heroSpecialty, setHeroSpecialty] = useState("all");
   const [heroLocation, setHeroLocation] = useState("all");
 
@@ -150,6 +152,7 @@ export function LandingClient({
     "iswarya",
     "gem hospital",
     "apollo cradle",
+    "kandanchavadi",
   ];
 
   const omrCount = initialDoctors.filter((doc) => {
@@ -167,7 +170,7 @@ export function LandingClient({
   const vadapalaniCount = initialDoctors.filter((doc) => {
     const loc = (doc.cityLocation || "").toLowerCase();
     const hosp = (doc.hospital || "").toLowerCase();
-    return loc.includes("vadapalani") || hosp.includes("vadapalani");
+    return loc.includes("vadapalani") || hosp.includes("vadapalani") || hosp.includes("sims") || hosp.includes("vijaya");
   }).length;
 
   const greamsCount = initialDoctors.filter((doc) => {
@@ -188,6 +191,30 @@ export function LandingClient({
     return loc.includes("anna nagar") || hosp.includes("anna nagar") || hosp.includes("mgm") || hosp.includes("smf");
   }).length;
 
+  const miotCount = initialDoctors.filter((doc) => {
+    const loc = (doc.cityLocation || "").toLowerCase();
+    const hosp = (doc.hospital || "").toLowerCase();
+    return loc.includes("manapakkam") || hosp.includes("miot");
+  }).length;
+
+  const relaCount = initialDoctors.filter((doc) => {
+    const loc = (doc.cityLocation || "").toLowerCase();
+    const hosp = (doc.hospital || "").toLowerCase();
+    return loc.includes("chromepet") || hosp.includes("rela");
+  }).length;
+
+  const billrothCount = initialDoctors.filter((doc) => {
+    const loc = (doc.cityLocation || "").toLowerCase();
+    const hosp = (doc.hospital || "").toLowerCase();
+    return loc.includes("shenoy") || hosp.includes("billroth");
+  }).length;
+
+  const mehtaCount = initialDoctors.filter((doc) => {
+    const loc = (doc.cityLocation || "").toLowerCase();
+    const hosp = (doc.hospital || "").toLowerCase();
+    return loc.includes("chetpet") || hosp.includes("mehta");
+  }).length;
+
   const displayedDoctors = initialDoctors.filter((doc) => {
     if (activeDoctorTab === "all") return true;
     const loc = (doc.cityLocation || "").toLowerCase();
@@ -195,11 +222,17 @@ export function LandingClient({
     if (activeDoctorTab === "omr") {
       return omrKeywords.some((k) => loc.includes(k) || hosp.includes(k));
     }
+    if (activeDoctorTab === "vadapalani") {
+      return loc.includes("vadapalani") || hosp.includes("vadapalani") || hosp.includes("sims") || hosp.includes("vijaya");
+    }
     if (activeDoctorTab === "alwarpet") {
       return loc.includes("alwarpet") || hosp.includes("alwarpet");
     }
-    if (activeDoctorTab === "vadapalani") {
-      return loc.includes("vadapalani") || hosp.includes("vadapalani");
+    if (activeDoctorTab === "miot") {
+      return loc.includes("manapakkam") || hosp.includes("miot");
+    }
+    if (activeDoctorTab === "rela") {
+      return loc.includes("chromepet") || hosp.includes("rela");
     }
     if (activeDoctorTab === "greams") {
       return loc.includes("greams") || hosp.includes("greams");
@@ -209,6 +242,12 @@ export function LandingClient({
     }
     if (activeDoctorTab === "annanagar") {
       return loc.includes("anna nagar") || hosp.includes("anna nagar") || hosp.includes("mgm") || hosp.includes("smf");
+    }
+    if (activeDoctorTab === "billroth") {
+      return loc.includes("shenoy") || hosp.includes("billroth");
+    }
+    if (activeDoctorTab === "mehta") {
+      return loc.includes("chetpet") || hosp.includes("mehta");
     }
     return true;
   });
@@ -395,19 +434,18 @@ export function LandingClient({
                   onChange={(e) => setHeroLocation(e.target.value)}
                   className="w-full bg-transparent text-xs font-semibold text-slate-800 dark:text-slate-200 outline-none cursor-pointer"
                 >
-                  <option value="all">📍 All Chennai (30 Doctors)</option>
-                  <option value="OMR">OMR Corridor (11 Doctors)</option>
-                  <option value="Sholinganallur">Sholinganallur (Gleneagles/OMR)</option>
-                  <option value="Karapakkam">Karapakkam (Apollo Cradle)</option>
-                  <option value="Perungudi">Perungudi (GEM Hospital)</option>
-                  <option value="Kelambakkam">Kelambakkam (Chettinad)</option>
-                  <option value="Pallikaranai">Pallikaranai (Kamakshi Hospital)</option>
-                  <option value="Alwarpet">Alwarpet (Kauvery Hospital)</option>
-                  <option value="Vadapalani">Vadapalani (Kauvery Hospital)</option>
-                  <option value="Greams Road">Greams Road (Apollo Main)</option>
-                  <option value="Adyar">Adyar (Fortis Malar)</option>
-                  <option value="Anna Nagar">Anna Nagar (MGM / SMF)</option>
-                  <option value="Velachery">Velachery (Prashanth Hospital)</option>
+                  <option value="all">📍 All Chennai (55 Doctors)</option>
+                  <option value="OMR">OMR Corridor (15 Doctors)</option>
+                  <option value="Vadapalani">Vadapalani (11 Doctors - Kauvery, SIMS, Vijaya)</option>
+                  <option value="Alwarpet">Alwarpet (6 Doctors - Kauvery)</option>
+                  <option value="Manapakkam">Manapakkam (3 Doctors - MIOT)</option>
+                  <option value="Chromepet">Chromepet (3 Doctors - Rela)</option>
+                  <option value="Shenoy Nagar">Shenoy Nagar (3 Doctors - Billroth)</option>
+                  <option value="Chetpet">Chetpet (3 Doctors - Dr. Mehta's)</option>
+                  <option value="Greams Road">Greams Road (2 Doctors - Apollo Main)</option>
+                  <option value="Adyar">Adyar (2 Doctors - Fortis Malar)</option>
+                  <option value="Anna Nagar">Anna Nagar (2 Doctors - MGM, SMF)</option>
+                  <option value="Velachery">Velachery (3 Doctors - Prashanth)</option>
                 </select>
               </div>
 
@@ -489,9 +527,9 @@ export function LandingClient({
           {/* Real Clinical Capacity Trust Cards */}
           <div className="mt-12 grid grid-cols-2 sm:grid-cols-4 gap-3 max-w-4xl mx-auto pt-6 border-t border-slate-200/60 dark:border-slate-800/60">
             <div className="p-4 rounded-2xl bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border border-slate-200 dark:border-slate-800 shadow-sm text-left hover:border-brand-500/40 transition">
-              <span className="text-2xl sm:text-3xl font-black text-brand-600 block">30+</span>
+              <span className="text-2xl sm:text-3xl font-black text-brand-600 block">55+</span>
               <span className="text-xs font-bold text-slate-800 dark:text-slate-200">Verified Doctors</span>
-              <span className="text-[11px] text-slate-400 block mt-0.5">Gleneagles, Apollo, Kauvery, Fortis, MGM</span>
+              <span className="text-[11px] text-slate-400 block mt-0.5">Apollo, Kauvery, MIOT, SIMS, Rela</span>
             </div>
 
             <div className="p-4 rounded-2xl bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border border-slate-200 dark:border-slate-800 shadow-sm text-left hover:border-sky-500/40 transition">
@@ -501,13 +539,13 @@ export function LandingClient({
             </div>
 
             <div className="p-4 rounded-2xl bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border border-slate-200 dark:border-slate-800 shadow-sm text-left hover:border-teal-500/40 transition">
-              <span className="text-2xl sm:text-3xl font-black text-teal-600 block">11</span>
+              <span className="text-2xl sm:text-3xl font-black text-teal-600 block">15</span>
               <span className="text-xs font-bold text-slate-800 dark:text-slate-200">OMR Highway Doctors</span>
               <span className="text-[11px] text-slate-400 block mt-0.5">Perungudi to Kelambakkam</span>
             </div>
 
             <div className="p-4 rounded-2xl bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border border-slate-200 dark:border-slate-800 shadow-sm text-left hover:border-emerald-500/40 transition">
-              <span className="text-2xl sm:text-3xl font-black text-emerald-600 block">4,600+</span>
+              <span className="text-2xl sm:text-3xl font-black text-emerald-600 block">8,400+</span>
               <span className="text-xs font-bold text-slate-800 dark:text-slate-200">Open Slots / 14 Days</span>
               <span className="text-[11px] text-slate-400 block mt-0.5">180s Mutex Lock Guaranteed</span>
             </div>
@@ -944,6 +982,276 @@ export function LandingClient({
               </a>
             </div>
           </div>
+
+          {/* Hospital 7: MIOT International */}
+          <div className="group p-6 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-brand-500/50 hover:shadow-lg transition flex flex-col justify-between">
+            <div>
+              <div className="flex items-center justify-between mb-4">
+                <span className="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-rose-50 text-rose-700 dark:bg-rose-950/80 dark:text-rose-300 border border-rose-200/60">
+                  Global Ortho & Cardio Hub
+                </span>
+                <span className="text-[11px] font-semibold text-emerald-600 flex items-center gap-1">
+                  <CheckCircle2 className="w-3.5 h-3.5" /> 3 Specialists Open
+                </span>
+              </div>
+              <h3 className="text-lg font-bold text-slate-900 dark:text-white group-hover:text-brand-600 transition">
+                MIOT International
+              </h3>
+              <p className="text-xs text-rose-600 dark:text-rose-400 font-semibold mt-0.5 flex items-center gap-1">
+                <MapPin className="w-3.5 h-3.5" /> Mount Poonamallee Road, Manapakkam
+              </p>
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-2.5 line-clamp-2 leading-relaxed">
+                1000-bed quaternary care centre with world-class Institute of Orthopaedics, Cardiac Care, and Neurosciences. Featuring Dr. Prithvi Mohandas and Dr. V. V. Bashi.
+              </p>
+              <div className="mt-3 flex flex-wrap gap-1.5 text-[10px] font-medium text-slate-600 dark:text-slate-300">
+                <span className="px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800">Orthopedics</span>
+                <span className="px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800">Cardiology</span>
+                <span className="px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800">Neurology</span>
+              </div>
+            </div>
+            <div className="mt-5 pt-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between">
+              <Link
+                href="/doctors?location=Manapakkam"
+                className="text-xs font-bold text-brand-600 dark:text-brand-400 hover:underline flex items-center gap-1"
+              >
+                <span>View MIOT Doctors</span>
+                <ArrowRight className="w-3 h-3" />
+              </Link>
+              <a
+                href="https://www.google.com/maps/search/?api=1&query=MIOT+International+Manapakkam+Chennai"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-[11px] text-slate-400 hover:text-slate-600"
+              >
+                Directions ↗
+              </a>
+            </div>
+          </div>
+
+          {/* Hospital 8: SIMS Hospital Vadapalani */}
+          <div className="group p-6 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-brand-500/50 hover:shadow-lg transition flex flex-col justify-between">
+            <div>
+              <div className="flex items-center justify-between mb-4">
+                <span className="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-sky-50 text-sky-700 dark:bg-sky-950/80 dark:text-sky-300 border border-sky-200/60">
+                  Metro Super Speciality
+                </span>
+                <span className="text-[11px] font-semibold text-emerald-600 flex items-center gap-1">
+                  <CheckCircle2 className="w-3.5 h-3.5" /> 3 Specialists Open
+                </span>
+              </div>
+              <h3 className="text-lg font-bold text-slate-900 dark:text-white group-hover:text-brand-600 transition">
+                SIMS Hospital (Vadapalani)
+              </h3>
+              <p className="text-xs text-sky-600 dark:text-sky-400 font-semibold mt-0.5 flex items-center gap-1">
+                <MapPin className="w-3.5 h-3.5" /> Jawaharlal Nehru Salai, Vadapalani Metro
+              </p>
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-2.5 line-clamp-2 leading-relaxed">
+                Directly connected to Vadapalani Metro. Renowned for Advanced Neurosciences, TAVR Valve Cardiac Programme, and Orthopedics. Featuring Dr. U. Meenakshisundaram and Dr. Gopalamurugan.
+              </p>
+              <div className="mt-3 flex flex-wrap gap-1.5 text-[10px] font-medium text-slate-600 dark:text-slate-300">
+                <span className="px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800">Neurology</span>
+                <span className="px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800">Cardiology</span>
+                <span className="px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800">Orthopedics</span>
+              </div>
+            </div>
+            <div className="mt-5 pt-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between">
+              <Link
+                href="/doctors?location=Vadapalani"
+                className="text-xs font-bold text-brand-600 dark:text-brand-400 hover:underline flex items-center gap-1"
+              >
+                <span>View SIMS Specialists</span>
+                <ArrowRight className="w-3 h-3" />
+              </Link>
+              <a
+                href="https://www.google.com/maps/search/?api=1&query=SIMS+Hospital+Vadapalani+Chennai"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-[11px] text-slate-400 hover:text-slate-600"
+              >
+                Directions ↗
+              </a>
+            </div>
+          </div>
+
+          {/* Hospital 9: Rela Hospital Chromepet */}
+          <div className="group p-6 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-brand-500/50 hover:shadow-lg transition flex flex-col justify-between">
+            <div>
+              <div className="flex items-center justify-between mb-4">
+                <span className="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-teal-50 text-teal-700 dark:bg-teal-950/80 dark:text-teal-300 border border-teal-200/60">
+                  Quaternary Institute
+                </span>
+                <span className="text-[11px] font-semibold text-emerald-600 flex items-center gap-1">
+                  <CheckCircle2 className="w-3.5 h-3.5" /> 3 Specialists Open
+                </span>
+              </div>
+              <h3 className="text-lg font-bold text-slate-900 dark:text-white group-hover:text-brand-600 transition">
+                Rela Hospital (Chromepet)
+              </h3>
+              <p className="text-xs text-teal-600 dark:text-teal-400 font-semibold mt-0.5 flex items-center gap-1">
+                <MapPin className="w-3.5 h-3.5" /> CLC Works Road, Chromepet, South Chennai
+              </p>
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-2.5 line-clamp-2 leading-relaxed">
+                Founded by Prof. Mohamed Rela. 450-bed quaternary care hub for hepatobiliary wellness, complex internal medicine, neurology, and critical care.
+              </p>
+              <div className="mt-3 flex flex-wrap gap-1.5 text-[10px] font-medium text-slate-600 dark:text-slate-300">
+                <span className="px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800">General Medicine</span>
+                <span className="px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800">Neurology</span>
+                <span className="px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800">Critical Care</span>
+              </div>
+            </div>
+            <div className="mt-5 pt-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between">
+              <Link
+                href="/doctors?location=Chromepet"
+                className="text-xs font-bold text-brand-600 dark:text-brand-400 hover:underline flex items-center gap-1"
+              >
+                <span>View Rela Doctors</span>
+                <ArrowRight className="w-3 h-3" />
+              </Link>
+              <a
+                href="https://www.google.com/maps/search/?api=1&query=Rela+Hospital+Chromepet+Chennai"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-[11px] text-slate-400 hover:text-slate-600"
+              >
+                Directions ↗
+              </a>
+            </div>
+          </div>
+
+          {/* Hospital 10: Apollo Speciality Hospitals OMR */}
+          <div className="group p-6 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-brand-500/50 hover:shadow-lg transition flex flex-col justify-between">
+            <div>
+              <div className="flex items-center justify-between mb-4">
+                <span className="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-purple-50 text-purple-700 dark:bg-purple-950/80 dark:text-purple-300 border border-purple-200/60">
+                  Apollo Network
+                </span>
+                <span className="text-[11px] font-semibold text-emerald-600 flex items-center gap-1">
+                  <CheckCircle2 className="w-3.5 h-3.5" /> 3 Specialists Open
+                </span>
+              </div>
+              <h3 className="text-lg font-bold text-slate-900 dark:text-white group-hover:text-brand-600 transition">
+                Apollo Speciality Hospitals (OMR)
+              </h3>
+              <p className="text-xs text-purple-600 dark:text-purple-400 font-semibold mt-0.5 flex items-center gap-1">
+                <MapPin className="w-3.5 h-3.5" /> Rajiv Gandhi Salai, Kandanchavadi / Perungudi
+              </p>
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-2.5 line-clamp-2 leading-relaxed">
+                Comprehensive multi-speciality tertiary facility catering to OMR IT professionals. Featuring Dr. Bellarmine Lawrence, Dr. Preetha Anand, and Dr. Anand Murugesan.
+              </p>
+              <div className="mt-3 flex flex-wrap gap-1.5 text-[10px] font-medium text-slate-600 dark:text-slate-300">
+                <span className="px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800">General Medicine</span>
+                <span className="px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800">Dermatology</span>
+                <span className="px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800">Orthopedics</span>
+              </div>
+            </div>
+            <div className="mt-5 pt-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between">
+              <Link
+                href="/doctors?location=Perungudi"
+                className="text-xs font-bold text-brand-600 dark:text-brand-400 hover:underline flex items-center gap-1"
+              >
+                <span>View Apollo OMR Doctors</span>
+                <ArrowRight className="w-3 h-3" />
+              </Link>
+              <a
+                href="https://www.google.com/maps/search/?api=1&query=Apollo+Speciality+Hospitals+OMR+Kandanchavadi+Chennai"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-[11px] text-slate-400 hover:text-slate-600"
+              >
+                Directions ↗
+              </a>
+            </div>
+          </div>
+
+          {/* Hospital 11: Billroth Hospitals */}
+          <div className="group p-6 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-brand-500/50 hover:shadow-lg transition flex flex-col justify-between">
+            <div>
+              <div className="flex items-center justify-between mb-4">
+                <span className="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-amber-50 text-amber-700 dark:bg-amber-950/80 dark:text-amber-300 border border-amber-200/60">
+                  Heritage Medical Group
+                </span>
+                <span className="text-[11px] font-semibold text-emerald-600 flex items-center gap-1">
+                  <CheckCircle2 className="w-3.5 h-3.5" /> 3 Specialists Open
+                </span>
+              </div>
+              <h3 className="text-lg font-bold text-slate-900 dark:text-white group-hover:text-brand-600 transition">
+                Billroth Hospitals (Shenoy Nagar)
+              </h3>
+              <p className="text-xs text-amber-600 dark:text-amber-400 font-semibold mt-0.5 flex items-center gap-1">
+                <MapPin className="w-3.5 h-3.5" /> Lakshmi Talkies Road, Shenoy Nagar
+              </p>
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-2.5 line-clamp-2 leading-relaxed">
+                Trusted for over 3 decades in central Chennai. Expert clinical care across General Medicine, Cardiology, and Gynecology. Featuring Dr. Rajesh B. and Dr. Kalpana S.
+              </p>
+              <div className="mt-3 flex flex-wrap gap-1.5 text-[10px] font-medium text-slate-600 dark:text-slate-300">
+                <span className="px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800">General Medicine</span>
+                <span className="px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800">Gynecology</span>
+                <span className="px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800">Cardiology</span>
+              </div>
+            </div>
+            <div className="mt-5 pt-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between">
+              <Link
+                href="/doctors?location=Shenoy%20Nagar"
+                className="text-xs font-bold text-brand-600 dark:text-brand-400 hover:underline flex items-center gap-1"
+              >
+                <span>View Billroth Doctors</span>
+                <ArrowRight className="w-3 h-3" />
+              </Link>
+              <a
+                href="https://www.google.com/maps/search/?api=1&query=Billroth+Hospitals+Shenoy+Nagar+Chennai"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-[11px] text-slate-400 hover:text-slate-600"
+              >
+                Directions ↗
+              </a>
+            </div>
+          </div>
+
+          {/* Hospital 12: Dr. Mehta's Hospitals */}
+          <div className="group p-6 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-brand-500/50 hover:shadow-lg transition flex flex-col justify-between">
+            <div>
+              <div className="flex items-center justify-between mb-4">
+                <span className="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-emerald-50 text-emerald-700 dark:bg-emerald-950/80 dark:text-emerald-300 border border-emerald-200/60">
+                  85+ Years Excellence
+                </span>
+                <span className="text-[11px] font-semibold text-emerald-600 flex items-center gap-1">
+                  <CheckCircle2 className="w-3.5 h-3.5" /> 3 Specialists Open
+                </span>
+              </div>
+              <h3 className="text-lg font-bold text-slate-900 dark:text-white group-hover:text-brand-600 transition">
+                Dr. Mehta&apos;s Hospitals (Chetpet)
+              </h3>
+              <p className="text-xs text-emerald-600 dark:text-emerald-400 font-semibold mt-0.5 flex items-center gap-1">
+                <MapPin className="w-3.5 h-3.5" /> McNichols Road, Chetpet, Central Chennai
+              </p>
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-2.5 line-clamp-2 leading-relaxed">
+                Pioneers of pediatric and maternal healthcare in India. Over 85 years of clinical trust. Featuring Dr. Thangavelu, Dr. Sudha Madhavan, and Dr. M. G. Kannan.
+              </p>
+              <div className="mt-3 flex flex-wrap gap-1.5 text-[10px] font-medium text-slate-600 dark:text-slate-300">
+                <span className="px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800">Pediatrics</span>
+                <span className="px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800">Gynecology</span>
+                <span className="px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800">General Medicine</span>
+              </div>
+            </div>
+            <div className="mt-5 pt-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between">
+              <Link
+                href="/doctors?location=Chetpet"
+                className="text-xs font-bold text-brand-600 dark:text-brand-400 hover:underline flex items-center gap-1"
+              >
+                <span>View Mehta&apos;s Doctors</span>
+                <ArrowRight className="w-3 h-3" />
+              </Link>
+              <a
+                href="https://www.google.com/maps/search/?api=1&query=Dr+Mehta+Hospitals+Chetpet+Chennai"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-[11px] text-slate-400 hover:text-slate-600"
+              >
+                Directions ↗
+              </a>
+            </div>
+          </div>
         </div>
 
         {/* Chennai Locality Quick Pills */}
@@ -954,18 +1262,17 @@ export function LandingClient({
           </div>
           <div className="flex flex-wrap items-center gap-1.5 text-xs">
             {[
-              { name: "OMR IT Corridor", query: "OMR" },
-              { name: "Sholinganallur", query: "Sholinganallur" },
-              { name: "Karapakkam", query: "Karapakkam" },
-              { name: "Perungudi", query: "Perungudi" },
-              { name: "Kelambakkam", query: "Kelambakkam" },
-              { name: "Pallikaranai", query: "Pallikaranai" },
-              { name: "Alwarpet", query: "Alwarpet" },
-              { name: "Vadapalani", query: "Vadapalani" },
-              { name: "Greams Road", query: "Greams Road" },
-              { name: "Adyar", query: "Adyar" },
-              { name: "Anna Nagar", query: "Anna Nagar" },
-              { name: "Velachery", query: "Velachery" },
+              { name: "OMR IT Corridor (15)", query: "OMR" },
+              { name: "Vadapalani (11)", query: "Vadapalani" },
+              { name: "Alwarpet (6)", query: "Alwarpet" },
+              { name: "Manapakkam - MIOT (3)", query: "Manapakkam" },
+              { name: "Chromepet - Rela (3)", query: "Chromepet" },
+              { name: "Shenoy Nagar - Billroth (3)", query: "Shenoy Nagar" },
+              { name: "Chetpet - Mehta's (3)", query: "Chetpet" },
+              { name: "Greams Road - Apollo (2)", query: "Greams Road" },
+              { name: "Adyar - Fortis Malar (2)", query: "Adyar" },
+              { name: "Anna Nagar - MGM/SMF (2)", query: "Anna Nagar" },
+              { name: "Velachery - Prashanth (3)", query: "Velachery" },
             ].map((hub) => (
               <Link
                 key={hub.name}
@@ -992,8 +1299,8 @@ export function LandingClient({
             </h2>
             <p className="text-sm sm:text-base text-slate-500 dark:text-slate-400 mt-1 max-w-2xl mx-auto">
               {lang === "ta"
-                ? "OMR தகவல் தொழில்நுட்ப சாலை, ஆழ்வார்பேட்டை, வடபழனி, கிரீம்ஸ் ரோடு, அடையாறு, அண்ணா நகர் உள்ளிட்ட முன்னணி மருத்துவமனைகளின் மருத்துவர்கள்"
-                : "Consult accredited doctors across OMR Corridor, Kauvery Alwarpet, Kauvery Vadapalani, Apollo Greams Road, Fortis Malar, and MGM Anna Nagar."}
+                ? "OMR, வடபழனி, ஆழ்வார்பேட்டை, மணப்பாக்கம் (மியாட்), குரோம்பேட்டை (ரேலா), கிரீம்ஸ் ரோடு உள்ளிட்ட முன்னணி மருத்துவமனைகளின் மருத்துவர்கள்"
+                : "Consult accredited doctors across OMR Corridor, Vadapalani, Alwarpet, MIOT Manapakkam, Rela Chromepet, Apollo Greams Road, Fortis Malar, and MGM Anna Nagar."}
             </p>
           </div>
 
@@ -1036,6 +1343,23 @@ export function LandingClient({
 
             <button
               type="button"
+              onClick={() => setActiveDoctorTab("vadapalani")}
+              className={`px-4 py-2 rounded-full text-xs sm:text-sm font-bold transition flex items-center gap-1.5 ${
+                activeDoctorTab === "vadapalani"
+                  ? "bg-brand-600 text-white shadow-md shadow-brand-500/20"
+                  : "bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-50"
+              }`}
+            >
+              <span>Vadapalani Hub (SIMS & Kauvery)</span>
+              <span className={`px-2 py-0.5 rounded-full text-[11px] font-bold ${
+                activeDoctorTab === "vadapalani" ? "bg-white/20 text-white" : "bg-teal-100 text-teal-800 dark:bg-teal-950/80 dark:text-teal-300"
+              }`}>
+                {vadapalaniCount} Doctors
+              </span>
+            </button>
+
+            <button
+              type="button"
               onClick={() => setActiveDoctorTab("alwarpet")}
               className={`px-4 py-2 rounded-full text-xs sm:text-sm font-bold transition flex items-center gap-1.5 ${
                 activeDoctorTab === "alwarpet"
@@ -1053,18 +1377,69 @@ export function LandingClient({
 
             <button
               type="button"
-              onClick={() => setActiveDoctorTab("vadapalani")}
+              onClick={() => setActiveDoctorTab("miot")}
               className={`px-4 py-2 rounded-full text-xs sm:text-sm font-bold transition flex items-center gap-1.5 ${
-                activeDoctorTab === "vadapalani"
+                activeDoctorTab === "miot"
                   ? "bg-brand-600 text-white shadow-md shadow-brand-500/20"
                   : "bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-50"
               }`}
             >
-              <span>Kauvery Vadapalani</span>
+              <span>MIOT Manapakkam</span>
               <span className={`px-2 py-0.5 rounded-full text-[11px] font-bold ${
-                activeDoctorTab === "vadapalani" ? "bg-white/20 text-white" : "bg-teal-100 text-teal-800 dark:bg-teal-950/80 dark:text-teal-300"
+                activeDoctorTab === "miot" ? "bg-white/20 text-white" : "bg-rose-100 text-rose-800 dark:bg-rose-950/80 dark:text-rose-300"
               }`}>
-                {vadapalaniCount} Doctors
+                {miotCount} Doctors
+              </span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setActiveDoctorTab("rela")}
+              className={`px-4 py-2 rounded-full text-xs sm:text-sm font-bold transition flex items-center gap-1.5 ${
+                activeDoctorTab === "rela"
+                  ? "bg-brand-600 text-white shadow-md shadow-brand-500/20"
+                  : "bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-50"
+              }`}
+            >
+              <span>Rela Chromepet</span>
+              <span className={`px-2 py-0.5 rounded-full text-[11px] font-bold ${
+                activeDoctorTab === "rela" ? "bg-white/20 text-white" : "bg-teal-100 text-teal-800 dark:bg-teal-950/80 dark:text-teal-300"
+              }`}>
+                {relaCount} Doctors
+              </span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setActiveDoctorTab("billroth")}
+              className={`px-4 py-2 rounded-full text-xs sm:text-sm font-bold transition flex items-center gap-1.5 ${
+                activeDoctorTab === "billroth"
+                  ? "bg-brand-600 text-white shadow-md shadow-brand-500/20"
+                  : "bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-50"
+              }`}
+            >
+              <span>Billroth Shenoy Nagar</span>
+              <span className={`px-2 py-0.5 rounded-full text-[11px] font-bold ${
+                activeDoctorTab === "billroth" ? "bg-white/20 text-white" : "bg-amber-100 text-amber-800 dark:bg-amber-950/80 dark:text-amber-300"
+              }`}>
+                {billrothCount} Doctors
+              </span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setActiveDoctorTab("mehta")}
+              className={`px-4 py-2 rounded-full text-xs sm:text-sm font-bold transition flex items-center gap-1.5 ${
+                activeDoctorTab === "mehta"
+                  ? "bg-brand-600 text-white shadow-md shadow-brand-500/20"
+                  : "bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-50"
+              }`}
+            >
+              <span>Dr. Mehta&apos;s Chetpet</span>
+              <span className={`px-2 py-0.5 rounded-full text-[11px] font-bold ${
+                activeDoctorTab === "mehta" ? "bg-white/20 text-white" : "bg-emerald-100 text-emerald-800 dark:bg-emerald-950/80 dark:text-emerald-300"
+              }`}>
+                {mehtaCount} Doctors
               </span>
             </button>
 
