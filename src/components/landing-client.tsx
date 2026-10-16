@@ -623,9 +623,9 @@ export function LandingClient({
           {/* Real Clinical Capacity Trust Cards */}
           <div className="mt-12 grid grid-cols-2 sm:grid-cols-4 gap-3 max-w-4xl mx-auto pt-6 border-t border-slate-200/60 dark:border-slate-800/60">
             <div className="p-4 rounded-2xl bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border border-slate-200 dark:border-slate-800 shadow-sm text-left hover:border-brand-500/40 transition">
-              <span className="text-2xl sm:text-3xl font-black text-brand-600 block">135+</span>
-              <span className="text-xs font-bold text-slate-800 dark:text-slate-200">Verified Doctors</span>
-              <span className="text-[11px] text-slate-400 block mt-0.5">34 Partner Hospitals in Chennai</span>
+              <span className="text-2xl sm:text-3xl font-black text-amber-500 block">Top 20</span>
+              <span className="text-xs font-bold text-slate-800 dark:text-slate-200">Highest Rated Doctors</span>
+              <span className="text-[11px] text-slate-400 block mt-0.5">4.96 – 4.99 ★ Rated Specialists</span>
             </div>
 
             <div className="p-4 rounded-2xl bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border border-slate-200 dark:border-slate-800 shadow-sm text-left hover:border-sky-500/40 transition">
@@ -1492,21 +1492,23 @@ export function LandingClient({
       <section className="py-20 bg-slate-100/60 dark:bg-slate-900/40 border-y border-slate-200/80 dark:border-slate-800/80">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-10">
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-brand-50 dark:bg-brand-950/80 border border-brand-200 dark:border-brand-800 text-xs font-semibold text-brand-700 dark:text-brand-300 mb-3">
-              <MapPin className="w-3.5 h-3.5 text-brand-600" />
-              <span>Chennai Medical Specialists</span>
+            <div className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-amber-50 dark:bg-amber-950/80 border border-amber-200 dark:border-amber-800 text-xs font-bold text-amber-800 dark:text-amber-200 mb-3 shadow-2xs">
+              <Star className="w-3.5 h-3.5 text-amber-500 fill-amber-500" />
+              <span>Top Rating 20 Specialists in Chennai (4.96 – 4.99 ★)</span>
             </div>
             <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900 dark:text-white">
-              {lang === "ta" ? "சென்னையின் முன்னணி சிறப்பு மருத்துவர்கள்" : lang === "te" ? "చెన్నైలోని ప్రముఖ వైద్య నిపుణులు" : "Top Verified Specialists in Chennai"}
+              {lang === "ta" ? "சென்னையின் டாப் 20 சிறந்த மருத்துவர்கள் (Top 20 Rated)" : lang === "te" ? "చెన్నైలోని టాప్ 20 రేటెడ్ వైద్యులు (Top 20 Rated)" : "Top Rating 20 Doctors in Chennai"}
             </h2>
             <p className="text-sm sm:text-base text-slate-500 dark:text-slate-400 mt-1 max-w-2xl mx-auto">
               {lang === "ta"
-                ? "OMR, வடபழனி, ஆழ்வார்பேட்டை, மணப்பாக்கம் (மியாட்), குரோம்பேட்டை (ரேலா), கிரீம்ஸ் ரோடு உள்ளிட்ட முன்னணி மருத்துவமனைகளின் மருத்துவர்கள்"
-                : "Consult accredited doctors across OMR Corridor, Vadapalani, Alwarpet, MIOT Manapakkam, Rela Chromepet, Apollo Greams Road, Fortis Malar, and MGM Anna Nagar."}
+                ? "சென்னை முன்னணி மருத்துவமனைகளில் அதிக மதிப்பீடு பெற்ற டாப் 20 சிறந்த மருத்துவர்களின் விவரங்கள் மட்டுமே இங்கு பட்டியலிடப்பட்டுள்ளன."
+                : lang === "te"
+                ? "చెన్నైలోని ప్రముఖ ఆసుపత్రులలో అత్యున్నత రేటింగ్ (4.96 – 4.99 ★) పొందిన టాప్ 20 నిపుణుల వివరాలు మాత్రమే ఇక్కడ అందుబాటులో ఉన్నాయి."
+                : "Exclusively presenting Chennai's top 20 highest-rated medical specialists (Ratings 4.96 – 4.99 ★) across premier hospital networks."}
             </p>
           </div>
 
-          {/* Interactive Locality Hub Filter Tabs */}
+          {/* Interactive Locality Hub Filter Tabs (Only shown if doctors present) */}
           <div className="flex flex-wrap items-center justify-center gap-2 mb-10">
             <button
               type="button"
@@ -1517,7 +1519,7 @@ export function LandingClient({
                   : "bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-50"
               }`}
             >
-              <span>📍 All Chennai Specialists</span>
+              <span>⭐ All Top 20 Doctors</span>
               <span className={`px-2 py-0.5 rounded-full text-[11px] font-bold ${
                 activeDoctorTab === "all" ? "bg-white/20 text-white" : "bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300"
               }`}>
@@ -1525,295 +1527,47 @@ export function LandingClient({
               </span>
             </button>
 
-            <button
-              type="button"
-              onClick={() => setActiveDoctorTab("omr")}
-              className={`px-4 py-2 rounded-full text-xs sm:text-sm font-bold transition flex items-center gap-1.5 ${
-                activeDoctorTab === "omr"
-                  ? "bg-brand-600 text-white shadow-md shadow-brand-500/20"
-                  : "bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-50"
-              }`}
-            >
-              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-              <span>OMR Corridor Hubs</span>
-              <span className={`px-2 py-0.5 rounded-full text-[11px] font-bold ${
-                activeDoctorTab === "omr" ? "bg-white/20 text-white" : "bg-emerald-100 text-emerald-800 dark:bg-emerald-950/80 dark:text-emerald-300"
-              }`}>
-                {omrCount} Doctors
-              </span>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => setActiveDoctorTab("vadapalani")}
-              className={`px-4 py-2 rounded-full text-xs sm:text-sm font-bold transition flex items-center gap-1.5 ${
-                activeDoctorTab === "vadapalani"
-                  ? "bg-brand-600 text-white shadow-md shadow-brand-500/20"
-                  : "bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-50"
-              }`}
-            >
-              <span>Vadapalani Hub (SIMS & Kauvery)</span>
-              <span className={`px-2 py-0.5 rounded-full text-[11px] font-bold ${
-                activeDoctorTab === "vadapalani" ? "bg-white/20 text-white" : "bg-teal-100 text-teal-800 dark:bg-teal-950/80 dark:text-teal-300"
-              }`}>
-                {vadapalaniCount} Doctors
-              </span>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => setActiveDoctorTab("alwarpet")}
-              className={`px-4 py-2 rounded-full text-xs sm:text-sm font-bold transition flex items-center gap-1.5 ${
-                activeDoctorTab === "alwarpet"
-                  ? "bg-brand-600 text-white shadow-md shadow-brand-500/20"
-                  : "bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-50"
-              }`}
-            >
-              <span>Kauvery Alwarpet</span>
-              <span className={`px-2 py-0.5 rounded-full text-[11px] font-bold ${
-                activeDoctorTab === "alwarpet" ? "bg-white/20 text-white" : "bg-sky-100 text-sky-800 dark:bg-sky-950/80 dark:text-sky-300"
-              }`}>
-                {alwarpetCount} Doctors
-              </span>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => setActiveDoctorTab("miot")}
-              className={`px-4 py-2 rounded-full text-xs sm:text-sm font-bold transition flex items-center gap-1.5 ${
-                activeDoctorTab === "miot"
-                  ? "bg-brand-600 text-white shadow-md shadow-brand-500/20"
-                  : "bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-50"
-              }`}
-            >
-              <span>MIOT Manapakkam</span>
-              <span className={`px-2 py-0.5 rounded-full text-[11px] font-bold ${
-                activeDoctorTab === "miot" ? "bg-white/20 text-white" : "bg-rose-100 text-rose-800 dark:bg-rose-950/80 dark:text-rose-300"
-              }`}>
-                {miotCount} Doctors
-              </span>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => setActiveDoctorTab("rela")}
-              className={`px-4 py-2 rounded-full text-xs sm:text-sm font-bold transition flex items-center gap-1.5 ${
-                activeDoctorTab === "rela"
-                  ? "bg-brand-600 text-white shadow-md shadow-brand-500/20"
-                  : "bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-50"
-              }`}
-            >
-              <span>Rela Chromepet</span>
-              <span className={`px-2 py-0.5 rounded-full text-[11px] font-bold ${
-                activeDoctorTab === "rela" ? "bg-white/20 text-white" : "bg-teal-100 text-teal-800 dark:bg-teal-950/80 dark:text-teal-300"
-              }`}>
-                {relaCount} Doctors
-              </span>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => setActiveDoctorTab("billroth")}
-              className={`px-4 py-2 rounded-full text-xs sm:text-sm font-bold transition flex items-center gap-1.5 ${
-                activeDoctorTab === "billroth"
-                  ? "bg-brand-600 text-white shadow-md shadow-brand-500/20"
-                  : "bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-50"
-              }`}
-            >
-              <span>Billroth Shenoy Nagar</span>
-              <span className={`px-2 py-0.5 rounded-full text-[11px] font-bold ${
-                activeDoctorTab === "billroth" ? "bg-white/20 text-white" : "bg-amber-100 text-amber-800 dark:bg-amber-950/80 dark:text-amber-300"
-              }`}>
-                {billrothCount} Doctors
-              </span>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => setActiveDoctorTab("mehta")}
-              className={`px-4 py-2 rounded-full text-xs sm:text-sm font-bold transition flex items-center gap-1.5 ${
-                activeDoctorTab === "mehta"
-                  ? "bg-brand-600 text-white shadow-md shadow-brand-500/20"
-                  : "bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-50"
-              }`}
-            >
-              <span>Dr. Mehta&apos;s Chetpet</span>
-              <span className={`px-2 py-0.5 rounded-full text-[11px] font-bold ${
-                activeDoctorTab === "mehta" ? "bg-white/20 text-white" : "bg-emerald-100 text-emerald-800 dark:bg-emerald-950/80 dark:text-emerald-300"
-              }`}>
-                {mehtaCount} Doctors
-              </span>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => setActiveDoctorTab("greams")}
-              className={`px-4 py-2 rounded-full text-xs sm:text-sm font-bold transition flex items-center gap-1.5 ${
-                activeDoctorTab === "greams"
-                  ? "bg-brand-600 text-white shadow-md shadow-brand-500/20"
-                  : "bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-50"
-              }`}
-            >
-              <span>Apollo Greams Road</span>
-              <span className={`px-2 py-0.5 rounded-full text-[11px] font-bold ${
-                activeDoctorTab === "greams" ? "bg-white/20 text-white" : "bg-purple-100 text-purple-800 dark:bg-purple-950/80 dark:text-purple-300"
-              }`}>
-                {greamsCount} Doctors
-              </span>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => setActiveDoctorTab("adyar")}
-              className={`px-4 py-2 rounded-full text-xs sm:text-sm font-bold transition flex items-center gap-1.5 ${
-                activeDoctorTab === "adyar"
-                  ? "bg-brand-600 text-white shadow-md shadow-brand-500/20"
-                  : "bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-50"
-              }`}
-            >
-              <span>Fortis Malar Adyar</span>
-              <span className={`px-2 py-0.5 rounded-full text-[11px] font-bold ${
-                activeDoctorTab === "adyar" ? "bg-white/20 text-white" : "bg-rose-100 text-rose-800 dark:bg-rose-950/80 dark:text-rose-300"
-              }`}>
-                {adyarCount} Doctors
-              </span>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => setActiveDoctorTab("annanagar")}
-              className={`px-4 py-2 rounded-full text-xs sm:text-sm font-bold transition flex items-center gap-1.5 ${
-                activeDoctorTab === "annanagar"
-                  ? "bg-brand-600 text-white shadow-md shadow-brand-500/20"
-                  : "bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-50"
-              }`}
-            >
-              <span>MGM & SMF Anna Nagar</span>
-              <span className={`px-2 py-0.5 rounded-full text-[11px] font-bold ${
-                activeDoctorTab === "annanagar" ? "bg-white/20 text-white" : "bg-amber-100 text-amber-800 dark:bg-amber-950/80 dark:text-amber-300"
-              }`}>
-                {annaNagarCount} Doctors
-              </span>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => setActiveDoctorTab("porur")}
-              className={`px-4 py-2 rounded-full text-xs sm:text-sm font-bold transition flex items-center gap-1.5 ${
-                activeDoctorTab === "porur"
-                  ? "bg-brand-600 text-white shadow-md shadow-brand-500/20"
-                  : "bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-50"
-              }`}
-            >
-              <span>SRMC Porur</span>
-              <span className={`px-2 py-0.5 rounded-full text-[11px] font-bold ${
-                activeDoctorTab === "porur" ? "bg-white/20 text-white" : "bg-indigo-100 text-indigo-800 dark:bg-indigo-950/80 dark:text-indigo-300"
-              }`}>
-                {porurCount} Doctors
-              </span>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => setActiveDoctorTab("mogappair")}
-              className={`px-4 py-2 rounded-full text-xs sm:text-sm font-bold transition flex items-center gap-1.5 ${
-                activeDoctorTab === "mogappair"
-                  ? "bg-brand-600 text-white shadow-md shadow-brand-500/20"
-                  : "bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-50"
-              }`}
-            >
-              <span>MMM Mogappair</span>
-              <span className={`px-2 py-0.5 rounded-full text-[11px] font-bold ${
-                activeDoctorTab === "mogappair" ? "bg-white/20 text-white" : "bg-rose-100 text-rose-800 dark:bg-rose-950/80 dark:text-rose-300"
-              }`}>
-                {mogappairCount} Doctors
-              </span>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => setActiveDoctorTab("velachery")}
-              className={`px-4 py-2 rounded-full text-xs sm:text-sm font-bold transition flex items-center gap-1.5 ${
-                activeDoctorTab === "velachery"
-                  ? "bg-brand-600 text-white shadow-md shadow-brand-500/20"
-                  : "bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-50"
-              }`}
-            >
-              <span>Velachery (Prashanth & Astra)</span>
-              <span className={`px-2 py-0.5 rounded-full text-[11px] font-bold ${
-                activeDoctorTab === "velachery" ? "bg-white/20 text-white" : "bg-teal-100 text-teal-800 dark:bg-teal-950/80 dark:text-teal-300"
-              }`}>
-                {velacheryCount} Doctors
-              </span>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => setActiveDoctorTab("kilpauk")}
-              className={`px-4 py-2 rounded-full text-xs sm:text-sm font-bold transition flex items-center gap-1.5 ${
-                activeDoctorTab === "kilpauk"
-                  ? "bg-brand-600 text-white shadow-md shadow-brand-500/20"
-                  : "bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-50"
-              }`}
-            >
-              <span>Kilpauk Hub</span>
-              <span className={`px-2 py-0.5 rounded-full text-[11px] font-bold ${
-                activeDoctorTab === "kilpauk" ? "bg-white/20 text-white" : "bg-sky-100 text-sky-800 dark:bg-sky-950/80 dark:text-sky-300"
-              }`}>
-                {kilpaukCount} Doctors
-              </span>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => setActiveDoctorTab("mylapore")}
-              className={`px-4 py-2 rounded-full text-xs sm:text-sm font-bold transition flex items-center gap-1.5 ${
-                activeDoctorTab === "mylapore"
-                  ? "bg-brand-600 text-white shadow-md shadow-brand-500/20"
-                  : "bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-50"
-              }`}
-            >
-              <span>Mylapore Hub</span>
-              <span className={`px-2 py-0.5 rounded-full text-[11px] font-bold ${
-                activeDoctorTab === "mylapore" ? "bg-white/20 text-white" : "bg-emerald-100 text-emerald-800 dark:bg-emerald-950/80 dark:text-emerald-300"
-              }`}>
-                {mylaporeCount} Doctors
-              </span>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => setActiveDoctorTab("tambaram")}
-              className={`px-4 py-2 rounded-full text-xs sm:text-sm font-bold transition flex items-center gap-1.5 ${
-                activeDoctorTab === "tambaram"
-                  ? "bg-brand-600 text-white shadow-md shadow-brand-500/20"
-                  : "bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-50"
-              }`}
-            >
-              <span>Tambaram (Hindu Mission)</span>
-              <span className={`px-2 py-0.5 rounded-full text-[11px] font-bold ${
-                activeDoctorTab === "tambaram" ? "bg-white/20 text-white" : "bg-amber-100 text-amber-800 dark:bg-amber-950/80 dark:text-amber-300"
-              }`}>
-                {tambaramCount} Doctors
-              </span>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => setActiveDoctorTab("tnagar")}
-              className={`px-4 py-2 rounded-full text-xs sm:text-sm font-bold transition flex items-center gap-1.5 ${
-                activeDoctorTab === "tnagar"
-                  ? "bg-brand-600 text-white shadow-md shadow-brand-500/20"
-                  : "bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-50"
-              }`}
-            >
-              <span>T. Nagar (Be Well)</span>
-              <span className={`px-2 py-0.5 rounded-full text-[11px] font-bold ${
-                activeDoctorTab === "tnagar" ? "bg-white/20 text-white" : "bg-purple-100 text-purple-800 dark:bg-purple-950/80 dark:text-purple-300"
-              }`}>
-                {tnagarCount} Doctors
-              </span>
-            </button>
+            {[
+              { id: "omr", label: "OMR Corridor Hubs", count: omrCount, badgeColor: "bg-emerald-100 text-emerald-800 dark:bg-emerald-950/80 dark:text-emerald-300" },
+              { id: "vadapalani", label: "Vadapalani (SIMS & Kauvery)", count: vadapalaniCount, badgeColor: "bg-teal-100 text-teal-800 dark:bg-teal-950/80 dark:text-teal-300" },
+              { id: "alwarpet", label: "Kauvery Alwarpet", count: alwarpetCount, badgeColor: "bg-sky-100 text-sky-800 dark:bg-sky-950/80 dark:text-sky-300" },
+              { id: "greams", label: "Apollo Greams Road", count: greamsCount, badgeColor: "bg-purple-100 text-purple-800 dark:bg-purple-950/80 dark:text-purple-300" },
+              { id: "miot", label: "MIOT Manapakkam", count: miotCount, badgeColor: "bg-rose-100 text-rose-800 dark:bg-rose-950/80 dark:text-rose-300" },
+              { id: "rela", label: "Rela Chromepet", count: relaCount, badgeColor: "bg-teal-100 text-teal-800 dark:bg-teal-950/80 dark:text-teal-300" },
+              { id: "porur", label: "SRMC Porur", count: porurCount, badgeColor: "bg-indigo-100 text-indigo-800 dark:bg-indigo-950/80 dark:text-indigo-300" },
+              { id: "annanagar", label: "MGM Anna Nagar", count: annaNagarCount, badgeColor: "bg-amber-100 text-amber-800 dark:bg-amber-950/80 dark:text-amber-300" },
+              { id: "mogappair", label: "MMM Mogappair", count: mogappairCount, badgeColor: "bg-rose-100 text-rose-800 dark:bg-rose-950/80 dark:text-rose-300" },
+              { id: "velachery", label: "Velachery (Prashanth)", count: velacheryCount, badgeColor: "bg-teal-100 text-teal-800 dark:bg-teal-950/80 dark:text-teal-300" },
+              { id: "kilpauk", label: "Kilpauk (Lifeline)", count: kilpaukCount, badgeColor: "bg-sky-100 text-sky-800 dark:bg-sky-950/80 dark:text-sky-300" },
+              { id: "mehta", label: "Dr. Mehta's Chetpet", count: mehtaCount, badgeColor: "bg-emerald-100 text-emerald-800 dark:bg-emerald-950/80 dark:text-emerald-300" },
+              { id: "billroth", label: "Billroth Shenoy Nagar", count: billrothCount, badgeColor: "bg-amber-100 text-amber-800 dark:bg-amber-950/80 dark:text-amber-300" },
+              { id: "adyar", label: "Fortis Malar Adyar", count: adyarCount, badgeColor: "bg-rose-100 text-rose-800 dark:bg-rose-950/80 dark:text-rose-300" },
+              { id: "mylapore", label: "Mylapore Hub", count: mylaporeCount, badgeColor: "bg-emerald-100 text-emerald-800 dark:bg-emerald-950/80 dark:text-emerald-300" },
+              { id: "tambaram", label: "Tambaram", count: tambaramCount, badgeColor: "bg-amber-100 text-amber-800 dark:bg-amber-950/80 dark:text-amber-300" },
+              { id: "tnagar", label: "T. Nagar", count: tnagarCount, badgeColor: "bg-purple-100 text-purple-800 dark:bg-purple-950/80 dark:text-purple-300" },
+            ]
+              .filter((hub) => hub.count > 0)
+              .map((hub) => (
+                <button
+                  key={hub.id}
+                  type="button"
+                  onClick={() => setActiveDoctorTab(hub.id)}
+                  className={`px-4 py-2 rounded-full text-xs sm:text-sm font-bold transition flex items-center gap-1.5 ${
+                    activeDoctorTab === hub.id
+                      ? "bg-brand-600 text-white shadow-md shadow-brand-500/20"
+                      : "bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-50"
+                  }`}
+                >
+                  <span>{hub.label}</span>
+                  <span
+                    className={`px-2 py-0.5 rounded-full text-[11px] font-bold ${
+                      activeDoctorTab === hub.id ? "bg-white/20 text-white" : hub.badgeColor
+                    }`}
+                  >
+                    {hub.count} {hub.count === 1 ? "Doctor" : "Doctors"}
+                  </span>
+                </button>
+              ))}
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -1828,12 +1582,19 @@ export function LandingClient({
 
               const teItem = specialtyTeMap[doc.specialty.name];
               const specialtyDisplay = lang === "te" ? teItem?.name || doc.specialty.name : lang === "ta" ? doc.specialty.nameTa : doc.specialty.name;
+              const rank = initialDoctors.findIndex((d) => d.id === doc.id) + 1;
 
               return (
                 <div
                   key={doc.id}
-                  className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden flex flex-col justify-between hover:shadow-md hover:border-brand-500/40 transition duration-200"
+                  className="relative bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden flex flex-col justify-between hover:shadow-md hover:border-brand-500/40 transition duration-200"
                 >
+                  {/* Top Rating Rank Badge */}
+                  <div className="absolute top-3.5 right-3.5 z-10 px-2.5 py-1 rounded-full bg-amber-50 dark:bg-amber-950/80 border border-amber-300 dark:border-amber-800/80 text-amber-800 dark:text-amber-200 text-[10px] font-black tracking-wide flex items-center gap-1 shadow-2xs">
+                    <Star className="w-3 h-3 fill-amber-500 text-amber-500" />
+                    <span>#{rank} TOP RATED</span>
+                  </div>
+
                   <div className="p-5">
                     {/* Doctor Avatar with Verified Badge / Animated Aura */}
                     <div className="flex items-center gap-3.5 mb-4">

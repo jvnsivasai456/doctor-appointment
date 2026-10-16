@@ -114,6 +114,26 @@ export function QuickBookingSection({ doctors }: QuickBookingSectionProps) {
     }
   }, [session]);
 
+  // Dynamically extract unique localities present in doctors list (no empty areas)
+  const availableLocations = React.useMemo(() => {
+    const locSet = new Set<string>();
+    doctors.forEach((d) => {
+      const raw = d.cityLocation || "";
+      const cleaned = raw.replace(/,?\s*Chennai/gi, "").trim();
+      if (cleaned) locSet.add(cleaned);
+    });
+    return Array.from(locSet).sort();
+  }, [doctors]);
+
+  // Dynamically extract unique specialties present in doctors list
+  const availableSpecialties = React.useMemo(() => {
+    const specSet = new Set<string>();
+    doctors.forEach((d) => {
+      if (d.specialty?.name) specSet.add(d.specialty.name);
+    });
+    return Array.from(specSet).sort();
+  }, [doctors]);
+
   // Filter available doctors
   const filteredDoctors = doctors.filter((doc) => {
     if (
@@ -422,14 +442,12 @@ export function QuickBookingSection({ doctors }: QuickBookingSectionProps) {
                     onChange={(e) => setSelectedSpecialty(e.target.value)}
                     className="px-3 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-semibold text-slate-700 dark:text-slate-200 outline-none cursor-pointer"
                   >
-                    <option value="all">🩺 All Specialties</option>
-                    <option value="General Medicine">General Medicine</option>
-                    <option value="Cardiology">Cardiology</option>
-                    <option value="Neurology">Neurology</option>
-                    <option value="Orthopedics">Orthopedics</option>
-                    <option value="Pediatrics">Pediatrics</option>
-                    <option value="Dermatology">Dermatology</option>
-                    <option value="Gynecology">Gynecology</option>
+                    <option value="all">🩺 All Specialties ({availableSpecialties.length})</option>
+                    {availableSpecialties.map((spec) => (
+                      <option key={spec} value={spec}>
+                        {spec}
+                      </option>
+                    ))}
                   </select>
 
                   {/* Location dropdown */}
@@ -438,22 +456,12 @@ export function QuickBookingSection({ doctors }: QuickBookingSectionProps) {
                     onChange={(e) => setSelectedLocation(e.target.value)}
                     className="px-3 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-semibold text-slate-700 dark:text-slate-200 outline-none cursor-pointer"
                   >
-                    <option value="all">📍 All Localities</option>
-                    <option value="OMR">OMR IT Corridor</option>
-                    <option value="Vadapalani">Vadapalani</option>
-                    <option value="Alwarpet">Alwarpet</option>
-                    <option value="Anna Nagar">Anna Nagar</option>
-                    <option value="Kilpauk">Kilpauk</option>
-                    <option value="Mylapore">Mylapore</option>
-                    <option value="Velachery">Velachery</option>
-                    <option value="Porur">Porur (SRMC)</option>
-                    <option value="Manapakkam">Manapakkam (MIOT)</option>
-                    <option value="Chromepet">Chromepet (Rela)</option>
-                    <option value="Greams Road">Greams Road (Apollo)</option>
-                    <option value="Mogappair">Mogappair (MMM)</option>
-                    <option value="Chetpet">Chetpet</option>
-                    <option value="Tambaram">Tambaram</option>
-                    <option value="T. Nagar">T. Nagar</option>
+                    <option value="all">📍 All Localities ({availableLocations.length})</option>
+                    {availableLocations.map((loc) => (
+                      <option key={loc} value={loc}>
+                        {loc}
+                      </option>
+                    ))}
                   </select>
 
                   {/* Search doctor input */}

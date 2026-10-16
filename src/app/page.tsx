@@ -28,8 +28,8 @@ export default async function HomePage() {
         take: 1,
       },
     },
-    orderBy: { rating: "desc" },
-    take: 200,
+    orderBy: [{ rating: "desc" }, { reviewCount: "desc" }],
+    take: 20,
   });
 
   return (
