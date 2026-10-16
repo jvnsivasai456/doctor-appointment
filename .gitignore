@@ -13,3 +13,5 @@ dev.db-journal
 prisma/*.db
 prisma/*.db-journal
 cloudflared.exe
+*.zip
+
