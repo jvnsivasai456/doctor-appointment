@@ -683,6 +683,36 @@ async function main() {
       lat: 12.9372,
       lng: 80.1983,
     },
+    {
+      user: await prisma.user.create({
+        data: {
+          name: "Dr. Dinesh Nayak",
+          email: "dinesh.nayak@medibook.ai",
+          passwordHash: defaultPasswordHash,
+          role: "DOCTOR",
+          dpdpConsent: true,
+          consentTimestamp: new Date(),
+        },
+      }),
+      specialtyName: "Neurology",
+      qualification: "MBBS, MD (Gen Med), DM (Neurology), Fellowship in Epilepsy (Canada)",
+      experienceYears: 29,
+      consultationFee: 1000,
+      rating: 4.96,
+      reviewCount: 520,
+      bio: "Director & Senior Consultant Neurologist at Gleneagles Health City, Sholinganallur / Perumbakkam. 29+ years of international clinical excellence in epilepsy management, chronic migraines, stroke rehabilitation, and movement disorders.",
+      bioTa: "க்ளெனேகில்ஸ் ஹெல்த் சிட்டி, சோழிங்கநல்லூர் / பெரும்பாக்கம், சென்னை. வலிப்பு நோய், கடுமையான ஒற்றைத் தலைவலி, பக்கவாதம் மற்றும் நரம்பியல் சிகிச்சைகளில் 29 ஆண்டுகள் உலகளாவிய அனுபவம் கொண்ட முன்னணி மூத்த நரம்பியல் நிபுணர்.",
+      languages: "English, தமிழ், Hindi",
+      avatarUrl: "/doctors/dr-dinesh-nayak.jpg",
+      hospital: "Gleneagles Health City",
+      cityLocation: "Sholinganallur (Perumbakkam), Chennai",
+      doctorIdCode: "DR-OMR-210",
+      fullAddress: "439, Cheran Nagar, Perumbakkam, Sholinganallur, Chennai, Tamil Nadu 600100",
+      landmark: "Near Sholinganallur Signal / Perumbakkam Junction",
+      pincode: "600100",
+      lat: 12.9056,
+      lng: 80.2081,
+    },
   ];
 
   const createdDoctorProfiles = [];
