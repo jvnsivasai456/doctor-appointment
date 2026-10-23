@@ -130,9 +130,7 @@ export function LandingClient({
   const { lang, t } = useApp();
   const [symptomInput, setSymptomInput] = useState("");
   const [openFaq, setOpenFaq] = useState<number | null>(null);
-  const [activeDoctorTab, setActiveDoctorTab] = useState<
-    "all" | "omr" | "vadapalani" | "alwarpet" | "miot" | "rela" | "greams" | "adyar" | "annanagar" | "billroth" | "mehta"
-  >("all");
+  const [activeDoctorTab, setActiveDoctorTab] = useState<string>("all");
   const [heroSpecialty, setHeroSpecialty] = useState("all");
   const [heroLocation, setHeroLocation] = useState("all");
 

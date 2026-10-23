@@ -1,0 +1,13 @@
+# Netlify Configuration for MediBook AI (Next.js 14 App Router)
+[build]
+  command = "npm run build"
+  publish = ".next"
+
+[functions]
+  included_files = ["prisma/dev.db", "prisma/schema.prisma"]
+
+[build.environment]
+  NODE_VERSION = "20"
+  NEXTAUTH_SECRET = "medibook-super-secret-production-key-32-chars-at-least"
+  DATA_ENCRYPTION_KEY = "medibook_aes_encryption_key_32c"
+  MOCK_AI_MODE = "true"

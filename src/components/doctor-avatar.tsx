@@ -4,7 +4,9 @@ import React, { useState } from "react";
 
 interface DoctorAvatarProps {
   src?: string | null;
+  avatarUrl?: string | null;
   name: string;
+  specialty?: string;
   specialtyName?: string;
   className?: string;
   size?: "sm" | "md" | "lg";
@@ -31,12 +33,15 @@ const femaleNameKeywords = [
 
 export function DoctorAvatar({
   src,
+  avatarUrl,
   name,
+  specialty,
   specialtyName,
   className = "",
   size = "md",
 }: DoctorAvatarProps) {
   const [hasError, setHasError] = useState(false);
+  const imageSource = src || avatarUrl;
 
   const isFemale = femaleNameKeywords.some((k) =>
     name.toLowerCase().includes(k)
@@ -46,7 +51,7 @@ export function DoctorAvatar({
     ? "/doctors/animated-female-doctor.svg"
     : "/doctors/animated-male-doctor.svg";
 
-  const effectiveSrc = !src || hasError ? animatedFallback : src;
+  const effectiveSrc = !imageSource || hasError ? animatedFallback : imageSource;
   const isAnimation =
     effectiveSrc.includes("animated-") || effectiveSrc.endsWith(".svg") || hasError;
 
