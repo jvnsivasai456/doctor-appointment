@@ -3,6 +3,9 @@
   command = "npm run build"
   publish = ".next"
 
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
+
 [functions]
   included_files = ["prisma/dev.db", "prisma/schema.prisma"]
 
