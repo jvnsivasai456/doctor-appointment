@@ -1,10 +1,10 @@
 # MediBook AI – Intelligent AI Doctor Appointment System
 
-> 🌐 **Live Website (Netlify)**: [https://boisterous-sprinkles-c8966f.netlify.app](https://boisterous-sprinkles-c8966f.netlify.app)  
+> 🌐 **Live Website (Netlify)**: [https://medibookai.netlify.app](https://medibookai.netlify.app)  
 > ⚡ **Cloudflare Live Tunnel**: [https://noon-atm-playback-floral.trycloudflare.com](https://noon-atm-playback-floral.trycloudflare.com)  
-> 📅 **Instant Doctor Appointment Booking**: [https://boisterous-sprinkles-c8966f.netlify.app/book-appointment](https://boisterous-sprinkles-c8966f.netlify.app/book-appointment)
+> 📅 **Instant Doctor Appointment Booking**: [https://medibookai.netlify.app/book-appointment](https://medibookai.netlify.app/book-appointment)
 
-[![Live Website](https://img.shields.io/badge/Live_Website-Netlify-00ad9f?style=for-the-badge&logo=netlify)](https://boisterous-sprinkles-c8966f.netlify.app)
+[![Live Website](https://img.shields.io/badge/Live_Website-medibookai-00ad9f?style=for-the-badge&logo=netlify)](https://medibookai.netlify.app)
 [![Next.js](https://img.shields.io/badge/Next.js-14.2.15-black?style=flat&logo=next.js)](https://nextjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.6-blue?style=flat&logo=typescript)](https://www.typescriptlang.org/)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind-3.4-38bdf8?style=flat&logo=tailwindcss)](https://tailwindcss.com/)
