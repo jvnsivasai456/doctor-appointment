@@ -2,7 +2,6 @@
   "name": "medibook-ai",
   "version": "1.0.0",
   "private": true,
-  "homepage": "https://medibookai.netlify.app",
   "scripts": {
     "dev": "next dev",
     "build": "prisma generate && next build",
