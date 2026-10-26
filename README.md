@@ -1,10 +1,10 @@
 # MediBook AI – Intelligent AI Doctor Appointment System
 
-> 🌐 **Live Website (Instant Access - No Login Required)**: [https://daughters-census-entitled-sit.trycloudflare.com](https://daughters-census-entitled-sit.trycloudflare.com)  
-> 🚀 **Netlify Production Deploy**: [https://boisterous-sprinkles-c8966f.netlify.app](https://boisterous-sprinkles-c8966f.netlify.app)  
-> 📅 **Instant Doctor Appointment Booking**: [https://daughters-census-entitled-sit.trycloudflare.com/book-appointment](https://daughters-census-entitled-sit.trycloudflare.com/book-appointment)
+> 🌐 **Permanent Live Website (Netlify)**: [https://boisterous-sprinkles-c8966f.netlify.app](https://boisterous-sprinkles-c8966f.netlify.app)  
+> 📅 **Instant Doctor Appointment Booking**: [https://boisterous-sprinkles-c8966f.netlify.app/book-appointment](https://boisterous-sprinkles-c8966f.netlify.app/book-appointment)  
+> 🤖 **AI Clinical Symptom Triage**: [https://boisterous-sprinkles-c8966f.netlify.app/triage](https://boisterous-sprinkles-c8966f.netlify.app/triage)
 
-[![Live Website](https://img.shields.io/badge/Live_Website-Online-success?style=for-the-badge&logo=cloudflare)](https://daughters-census-entitled-sit.trycloudflare.com)
+[![Live Website](https://img.shields.io/badge/Live_Website-Netlify-00ad9f?style=for-the-badge&logo=netlify)](https://boisterous-sprinkles-c8966f.netlify.app)
 [![Next.js](https://img.shields.io/badge/Next.js-14.2.15-black?style=flat&logo=next.js)](https://nextjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.6-blue?style=flat&logo=typescript)](https://www.typescriptlang.org/)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind-3.4-38bdf8?style=flat&logo=tailwindcss)](https://tailwindcss.com/)
