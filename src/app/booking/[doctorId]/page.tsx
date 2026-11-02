@@ -417,48 +417,63 @@ function BookingWizardContent() {
             <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-2">
               Available Dates (Next 2 Weeks)
             </label>
-            <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-thin">
-              {availableDates.map((dateStr) => {
-                const d = new Date(dateStr + "T00:00:00");
-                const isSelected = selectedDate === dateStr;
-                return (
-                  <button
-                    key={dateStr}
-                    type="button"
-                    onClick={() => {
-                      setSelectedDate(dateStr);
-                      setSelectedSlot(null);
-                    }}
-                    className={`p-3 rounded-2xl border text-center shrink-0 w-24 transition ${
-                      isSelected
-                        ? "bg-brand-600 text-white border-brand-600 shadow-md shadow-brand-500/20"
-                        : "bg-slate-50 dark:bg-slate-950 border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-900"
-                    }`}
-                  >
-                    <span className="text-[11px] uppercase font-bold block opacity-80">
-                      {d.toLocaleDateString("en-US", { weekday: "short" })}
-                    </span>
-                    <span className="text-lg font-extrabold block my-0.5">
-                      {d.getDate()}
-                    </span>
-                    <span className="text-[10px] block opacity-80">
-                      {d.toLocaleDateString("en-US", { month: "short" })}
-                    </span>
-                  </button>
-                );
-              })}
-            </div>
+            {availableDates.length === 0 ? (
+              <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-center">
+                <p className="text-xs text-slate-500 mb-3">No upcoming slots found for this doctor right now.</p>
+                <button
+                  type="button"
+                  onClick={() => window.location.reload()}
+                  className="px-4 py-2 bg-brand-600 hover:bg-brand-700 text-white rounded-lg text-xs font-semibold transition"
+                >
+                  Refresh Slots
+                </button>
+              </div>
+            ) : (
+              <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-thin">
+                {availableDates.map((dateStr) => {
+                  const d = new Date(dateStr + "T00:00:00");
+                  const isSelected = selectedDate === dateStr;
+                  return (
+                    <button
+                      key={dateStr}
+                      type="button"
+                      onClick={() => {
+                        setSelectedDate(dateStr);
+                        setSelectedSlot(null);
+                      }}
+                      className={`p-3 rounded-2xl border text-center shrink-0 w-24 transition ${
+                        isSelected
+                          ? "bg-brand-600 text-white border-brand-600 shadow-md shadow-brand-500/20"
+                          : "bg-slate-50 dark:bg-slate-950 border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-900"
+                      }`}
+                    >
+                      <span className="text-[11px] uppercase font-bold block opacity-80">
+                        {d.toLocaleDateString("en-US", { weekday: "short" })}
+                      </span>
+                      <span className="text-lg font-extrabold block my-0.5">
+                        {d.getDate()}
+                      </span>
+                      <span className="text-[10px] block opacity-80">
+                        {d.toLocaleDateString("en-US", { month: "short" })}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+            )}
           </div>
 
           {/* Slots Grid */}
           <div>
             <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-2">
               Available Slots for{" "}
-              {new Date(selectedDate + "T00:00:00").toLocaleDateString("en-US", {
-                weekday: "long",
-                month: "short",
-                day: "numeric",
-              })}
+              {selectedDate && !isNaN(new Date(selectedDate + "T00:00:00").getTime())
+                ? new Date(selectedDate + "T00:00:00").toLocaleDateString("en-US", {
+                    weekday: "long",
+                    month: "short",
+                    day: "numeric",
+                  })
+                : "Selected Date"}
             </label>
 
             {currentSlots.length === 0 ? (

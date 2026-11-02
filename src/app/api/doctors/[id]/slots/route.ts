@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getLockStatus } from "@/lib/lock-manager";
+import { generateDoctorSlots } from "@/lib/slot-generator";
 
 export const dynamic = "force-dynamic";
 
@@ -12,7 +13,7 @@ export async function GET(
     const doctorId = params.id;
     const now = new Date();
 
-    const slots = await prisma.slot.findMany({
+    let slots = await prisma.slot.findMany({
       where: {
         doctorId,
         isBooked: false,
@@ -22,6 +23,38 @@ export async function GET(
       orderBy: { startTime: "asc" },
       take: 60, // next ~2 weeks
     });
+
+    // Auto-bootstrap active slots for this doctor if none are in the future
+    if (slots.length === 0) {
+      const doctorExists = await prisma.doctorProfile.findUnique({
+        where: { id: doctorId },
+        select: { id: true },
+      });
+
+      if (doctorExists) {
+        const newSlotsData = generateDoctorSlots(doctorId, 14, now);
+        if (newSlotsData.length > 0) {
+          try {
+            await prisma.slot.createMany({
+              data: newSlotsData,
+            });
+          } catch (e) {
+            // Ignore potential race-condition duplicate inserts
+          }
+
+          slots = await prisma.slot.findMany({
+            where: {
+              doctorId,
+              isBooked: false,
+              isEmergencyBlocked: false,
+              startTime: { gt: now },
+            },
+            orderBy: { startTime: "asc" },
+            take: 60,
+          });
+        }
+      }
+    }
 
     // Check mutex lock status for each slot
     const slotsWithLockStatus = await Promise.all(
