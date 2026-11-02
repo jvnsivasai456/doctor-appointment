@@ -16,6 +16,7 @@ export async function GET() {
     const userId = (session.user as any).id;
     const userRole = (session.user as any).role;
 
+    let realUserId = userId;
     let appointments;
     if (userRole === "DOCTOR") {
       const doctorProfile = await prisma.doctorProfile.findUnique({
@@ -36,8 +37,19 @@ export async function GET() {
         orderBy: { appointmentDate: "asc" },
       });
     } else {
+      // Resolve patient by email if ID is stale from earlier session
+      const userExists = await prisma.user.findUnique({ where: { id: userId } });
+      if (!userExists && session.user?.email) {
+        const userByEmail = await prisma.user.findUnique({
+          where: { email: session.user.email.toLowerCase().trim() },
+        });
+        if (userByEmail) {
+          realUserId = userByEmail.id;
+        }
+      }
+
       appointments = await prisma.appointment.findMany({
-        where: { patientId: userId },
+        where: { patientId: realUserId },
         include: {
           doctor: { include: { user: true, specialty: true } },
           slot: true,

@@ -213,6 +213,8 @@ function BookingWizardContent() {
           slotId: selectedSlot.id,
           symptoms,
           patientPhone: phone,
+          patientName: session?.user?.name,
+          patientEmail: session?.user?.email,
           urgency: initialUrgency,
           triageSpecialty: doctor?.specialty.name,
         }),

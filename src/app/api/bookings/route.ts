@@ -21,16 +21,24 @@ export async function POST(req: Request) {
     } = body;
 
     let patientId = (session?.user as any)?.id;
+    let user = null;
 
-    // Support instant 1-click home page booking without prior login barrier
-    if (!patientId) {
+    if (patientId) {
+      user = await prisma.user.findUnique({
+        where: { id: patientId },
+      });
+    }
+
+    // Support instant 1-click booking and handle stale session IDs after db updates
+    if (!user) {
       const cleanPhone = (patientPhone || "").replace(/\D/g, "");
       const email =
-        patientEmail?.trim() ||
+        session?.user?.email?.toLowerCase().trim() ||
+        patientEmail?.toLowerCase().trim() ||
         (cleanPhone ? `patient_${cleanPhone}@medibook.ai` : `guest_${Date.now()}@medibook.ai`);
-      const name = patientName?.trim() || "Patient (Online Booking)";
+      const name = session?.user?.name?.trim() || patientName?.trim() || "Patient (Online Booking)";
 
-      let user = await prisma.user.findUnique({
+      user = await prisma.user.findUnique({
         where: { email },
       });
 
